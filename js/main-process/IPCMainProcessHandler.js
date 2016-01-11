@@ -7,14 +7,14 @@
 function IPCMainProcessHandler() {
 	var _this = this;
 
-	const ipc = require("ipc");
+	const ipcMain = require("electron").ipcMain;
 
 	var init = function() {
 		userNameCheckHandler();
 	};
 
 	var userNameCheckHandler = function() {
-		ipc.on('userNameCheck', function(event, arg) {
+		ipcMain.on('userNameCheck', function(event, arg) {
 			var msgObj;
 
 			try {
@@ -23,9 +23,9 @@ function IPCMainProcessHandler() {
 				console.log("Received asynchronous-message");
 				console.log(msgObj);
 
-				event.sender.send("asynchronous-reply", true);
+				event.sender.send("userNameCheckResult", true);
 			} catch (e) {
-				event.sender.send("asynchronous-reply", false);
+				event.sender.send("userNameCheckResult", false);
 			}
 		});
 	};

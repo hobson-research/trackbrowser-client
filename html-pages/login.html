@@ -9,7 +9,7 @@
 	<script>
 		'use strict';
 
-		const ipc = require('ipc');
+		const ipcRenderer = require("electron").ipcRenderer;
 
 		var loginFormEl;
 		var userNameInputEl;
@@ -24,8 +24,9 @@
 
 				ipcRenderer.send("userNameCheck", userNameVal);
 
-				ipcRenderer.on("userNameCheck", function(e) {
+				ipcRenderer.on("userNameCheckResult", function(e, arg) {
 					console.log(e);
+					console.log(arg);
 				});
 
 				e.preventDefault();

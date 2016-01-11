@@ -25,6 +25,8 @@ function HackBrowserWindowManager() {
 		});
 
 		loginWindow.loadUrl("file://" + __app.basePath + "/html-pages/login.html");
+
+		loginWindow.openDevTools();
 	};
 
 	_this.openPictureDisplayWindow = function() {
