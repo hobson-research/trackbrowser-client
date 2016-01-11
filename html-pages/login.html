@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Track Browser</title>
+
+	<link rel="stylesheet" href="css/cssreset-min.css">
+	<link rel="stylesheet" href="css/login.css">
+
+	<script>
+		'use strict';
+
+		const ipc = require('ipc');
+
+		var loginFormEl;
+		var userNameInputEl;
+		var userNameVal;
+
+		document.addEventListener("DOMContentLoaded", function() {
+			loginFormEl = document.getElementById("login-form");
+			userNameInputEl = document.getElementById("input-username");
+
+			loginFormEl.addEventListener("submit", function(e) {
+				var userNameVal = userNameInputEl.value;
+
+				ipcRenderer.send("userNameCheck", userNameVal);
+
+				ipcRenderer.on("userNameCheck", function(e) {
+					console.log(e);
+				});
+
+				e.preventDefault();
+			});
+		});
+	</script>
+</head>
+<body id="body-login">
+	<div id="login-wrapper">
+		<form id="login-form">
+			<div id="login-input-wrapper">
+				<p class="desc">Your browsing data will be tracked for research purposes. Please enter your username to continue browsing. </p>
+
+				<input type="text" id="input-username" placeholder="Username" />
+			</div><!-- // #login-input-wrapper -->
+
+			<input type="submit" id="submit" value="Start Browsing" />
+		</form><!-- // #login-form -->
+	</div><!-- // #login-wrapper -->
+</body>
+</html>
