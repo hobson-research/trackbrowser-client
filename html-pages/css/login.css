@@ -79,6 +79,7 @@ input#submit {
 	-webkit-app-region: no-drag;
 	cursor: pointer;
 	outline: none;
+	border: none;
 }
 
 input#submit:hover {

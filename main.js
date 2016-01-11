@@ -11,6 +11,7 @@ const electron = require("electron");
 const app = electron.app;
 const fs = require("fs");
 const dialog = require("dialog");
+const EventEmitter = require("events").EventEmitter;
 const HackBrowserWindowManager = require("./js/main-process/HackBrowserWindowManager");
 const IPCMainProcessHandler = require("./js/main-process/IPCMainProcessHandler");
 const ActivityRecorder = require("./js/common/ActivityRecorder.js");
@@ -24,8 +25,12 @@ app.on("window-all-closed", function() {
 });
 
 var startBrowser = function() {
-	var windowManager = new HackBrowserWindowManager();
+	// create a shared EventEmitter for windowManager to communicate with ipcHandler
+	const mainProcessEventEmitter = new EventEmitter();
+
+	var windowManager = new HackBrowserWindowManager(mainProcessEventEmitter);
 	var recorder = new ActivityRecorder();
+	var ipcHandler = new IPCMainProcessHandler(mainProcessEventEmitter);
 
 	recorder.checkServerAlive(
 		function(err) {
@@ -39,8 +44,6 @@ var startBrowser = function() {
 			}
 		}
 	);
-
-	// windowManager.openNewBrowserWindow();
 };
 
 app.on("ready", function() {
