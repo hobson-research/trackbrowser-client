@@ -1,0 +1,86 @@
+html {
+	background: #7d40b8;
+}
+
+body {
+	color: #fff;
+	font-size: 20px;
+	line-height: 38px;
+	font-family: 'Roboto', "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-weight: 400;
+	-webkit-font-smoothing: antialiased;
+	/* Fix for webkit rendering */
+	-webkit-text-size-adjust: 100%;
+	position: relative;
+	-webkit-app-region: drag;
+}
+
+#login-wrapper {
+	height: 400px;
+	position: relative;
+}
+
+#login-input-wrapper {
+	padding: 30px 40px 0 40px;
+}
+
+/* Links */
+a {
+	color: #222;
+	text-decoration: none;
+	outline: 0;
+}
+
+a:hover,
+a:focus {
+	color: #555;
+}
+
+p.desc {
+	color: #fff;
+	font-weight: 300;
+}
+
+input[type="text"] {
+	color: #fff;
+	display: block;
+	width: 100%;
+	background: transparent;
+	margin-top: 20px;
+	padding: 25px 30px;
+	border: 1px solid #9d60d8;
+	box-sizing: border-box;
+	outline: none;
+	-webkit-app-region: no-drag;
+}
+
+input[type="text"]:focus {
+	color: #fff;
+	background: #8d50c8;
+	border-color: #8d50c8;
+}
+
+::-webkit-input-placeholder {
+	color: #9d60d8;
+}
+
+input#submit {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	display: block;
+	text-align: center;
+	width: 100%;
+	padding: 32px 30px;
+	color: #444;
+	background: #fff;
+	font-weight: bold;
+	box-sizing: border-box;
+	-webkit-app-region: no-drag;
+	cursor: pointer;
+	outline: none;
+}
+
+input#submit:hover {
+	color: #7d40b8;
+}

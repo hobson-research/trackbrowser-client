@@ -12,8 +12,8 @@ const app = electron.app;
 const fs = require("fs");
 const dialog = require("dialog");
 const HackBrowserWindowManager = require("./js/main-process/HackBrowserWindowManager");
-const GlobalShortcutHandler = require("./js/main-process/GlobalShortcutHandler");
 const IPCMainProcessHandler = require("./js/main-process/IPCMainProcessHandler");
+const ActivityRecorder = require("./js/common/ActivityRecorder.js");
 
 app.on("window-all-closed", function() {
 	if (process.platform != "darwin") {
@@ -24,19 +24,26 @@ app.on("window-all-closed", function() {
 });
 
 var startBrowser = function() {
-	var hackBrowserWindowManager = new HackBrowserWindowManager();
-	var shortcutHandler = new GlobalShortcutHandler(hackBrowserWindowManager);
+	var windowManager = new HackBrowserWindowManager();
+	var recorder = new ActivityRecorder();
 
-	// register all global shortcuts
-	shortcutHandler.registerAll();
+	recorder.checkServerAlive(
+		function(err) {
+			dialog.showErrorBox('Server Not Responding', 'Server is not responding. ');
 
-	hackBrowserWindowManager.openNewWindow();
+			app.quit();
+		},
+		function(response) {
+			if (response.statusCode === 200) {
+				windowManager.openLoginWindow();
+			}
+		}
+	);
+
+	// windowManager.openNewBrowserWindow();
 };
 
 app.on("ready", function() {
-
-	console.log("ready");
-
 	// check if .data directory exists
 	fs.exists(GLOBAL.__app.dataPath, function(exists) {
 		if (exists === false) {

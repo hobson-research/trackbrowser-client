@@ -10,70 +10,92 @@ const PersistentStorage = require(__app.basePath + "/js/common/PersistentStorage
  * @constructor
  */
 function HackBrowserWindowManager() {
-	this.windowList = {};
-	this.createdWindowCount = 0;
-}
-
-HackBrowserWindowManager.prototype.openNewWindow = function(url) {
 	var _this = this;
 
-	// get last browser size
-	PersistentStorage.getItem("browserWindowSize", function(err, browserSize) {
-		if (err) {
-			browserSize = {
-				width: 1000,
-				height: 800
-			};
-		}
+	var windowList = {};
+	var createdWindowCount = 0;
 
-		// create the browser window
-		var newWindow = new BrowserWindow({
-			width: browserSize.width,
-			height: browserSize.height,
-			frame: true
+	_this.openLoginWindow = function() {
+		// Create the login window
+		var loginWindow = new BrowserWindow({
+			width:600,
+			height: 400,
+			resizable: false,
+			frame: false
 		});
 
-		// load the HTML file for browser window
-		newWindow.loadURL("file://" + __app.basePath + "/html-pages/browser-window.html");
+		loginWindow.loadUrl("file://" + __app.basePath + "/html-pages/login.html");
+	};
 
-		// Open the DevTools (debugging)
-		newWindow.webContents.openDevTools();
+	_this.openPictureDisplayWindow = function() {
 
-		_this.windowList[newWindow.id] = newWindow;
-		_this.attachEventHandlers(newWindow);
+	};
 
-		// increase window count
-		_this.createdWindowCount++;
-	});
-};
+	_this.openResearchTopicWindow = function() {
 
-HackBrowserWindowManager.prototype.attachEventHandlers = function(browserWindow) {
-	let _this = this;
+	};
 
-	var windowId = browserWindow.id;
+	_this.openNewBrowserWindow = function(url) {
+		var _this = this;
 
-	// save browser window's width/height when user closes it
-	browserWindow.on('close', function() {
-		var size = browserWindow.getSize();
+		// get last browser size
+		PersistentStorage.getItem("browserWindowSize", function(err, browserSize) {
+			if (err) {
+				browserSize = {
+					width: 1000,
+					height: 800
+				};
+			}
 
-		var sizeObject = {
-			"width": size[0],
-			"height": size[1]
-		};
+			// create the browser window
+			var newWindow = new BrowserWindow({
+				width: browserSize.width,
+				height: browserSize.height,
+				frame: true
+			});
 
-		// save to persistent storage
-		PersistentStorage.setItem("browserWindowSize", sizeObject);
-	});
+			// load the HTML file for browser window
+			newWindow.loadURL("file://" + __app.basePath + "/html-pages/browser-window.html");
 
-	// remove the window from windowList and remove reference so that GC clear is from memory
-	browserWindow.on('closed', function() {
-		if (_this.windowList.hasOwnProperty(windowId)) {
-			console.log("deleting window " + windowId);
+			// Open the DevTools (debugging)
+			newWindow.webContents.openDevTools();
 
-			delete _this.windowList[windowId];
-			browserWindow = null;
-		}
-	});
-};
+			windowList[newWindow.id] = newWindow;
+			_this.attachEventHandlers(newWindow);
+
+			// increase window count
+			createdWindowCount++;
+		});
+	};
+
+	_this.attachEventHandlers = function(browserWindow) {
+		let _this = this;
+
+		var windowId = browserWindow.id;
+
+		// save browser window's width/height when user closes it
+		browserWindow.on('close', function() {
+			var size = browserWindow.getSize();
+
+			var sizeObject = {
+				"width": size[0],
+				"height": size[1]
+			};
+
+			// save to persistent storage
+			PersistentStorage.setItem("browserWindowSize", sizeObject);
+		});
+
+		// remove the window from windowList and remove reference so that GC clear is from memory
+		browserWindow.on('closed', function() {
+			if (_this.windowList.hasOwnProperty(windowId)) {
+				console.log("deleting window " + windowId);
+
+				delete _this.windowList[windowId];
+				browserWindow = null;
+			}
+		});
+	};
+}
 
 module.exports = HackBrowserWindowManager;

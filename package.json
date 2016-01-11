@@ -1,5 +1,8 @@
 {
-	"name": "hackbrowser",
-	"version": "0.1.0", 
-	"main": "main.js"
+  "name": "hackbrowser",
+  "version": "0.1.0",
+  "main": "main.js",
+  "dependencies": {
+    "request": "2.67.0"
+  }
 }
