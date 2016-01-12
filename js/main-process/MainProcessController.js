@@ -18,6 +18,8 @@ function MainProcessController() {
 	var ipcHandler;
 	var mainProcessEventEmitter;
 
+	var participantData = {};
+
 	var init = function() {
 		attachEventHandlers();
 	};
@@ -87,6 +89,19 @@ function MainProcessController() {
 
 	_this.getMainProcessEventEmitter = function() {
 		return mainProcessEventEmitter;
+	};
+
+	_this.setParticipantDataItem = function(key, value) {
+		participantData[key] = value;
+	};
+
+	/**
+	 * get participant's data (username, research type, companies, etc)
+	 *
+	 * @returns {object}
+	 */
+	_this.getParticipantData = function() {
+		return participantData;
 	};
 };
 

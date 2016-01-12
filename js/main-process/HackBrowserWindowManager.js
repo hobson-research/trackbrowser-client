@@ -20,7 +20,6 @@ function HackBrowserWindowManager(mainProcessController) {
 	var loginWindow;
 	var researchTopicWindow;
 
-	var participantData = {};
 
 	/* ====================================
 	 private methods
@@ -28,13 +27,10 @@ function HackBrowserWindowManager(mainProcessController) {
 	var init = function() {
 		mainProcessEventEmitter = mainProcessController.getMainProcessEventEmitter();
 
-		mainProcessEventEmitter.on("userNumberCheckPass", function(userName) {
+		mainProcessEventEmitter.on("userNumberCheckPass", function(userNumber) {
 			console.log("userNameCheckPass event received");
 
-			// set username
-			participantData["userName"] = userName;
-			console.log("participantData");
-			console.log(participantData);
+			mainProcessController.setParticipantDataItem("userNumber", userNumber);
 
 			_this.openResearchTopicWindow();
 
@@ -47,11 +43,9 @@ function HackBrowserWindowManager(mainProcessController) {
 
 			for (var key in researchTopicData) {
 				if (researchTopicData.hasOwnProperty(key)) {
-					participantData[key] = researchTopicData[key];
+					mainProcessController.setParticipantDataItem(key, researchTopicData[key]);
 				}
 			}
-			console.log("participantData");
-			console.log(participantData);
 
 			_this.openNewBrowserWindow(function() {
 				// close research input window
@@ -103,7 +97,7 @@ function HackBrowserWindowManager(mainProcessController) {
 
 		loginWindow.loadURL("file://" + __app.basePath + "/html-pages/login.html");
 
-		loginWindow.openDevTools();
+		// loginWindow.openDevTools();
 
 		callback();
 	};
@@ -164,15 +158,6 @@ function HackBrowserWindowManager(mainProcessController) {
 
 			callback();
 		});
-	};
-
-	/**
-	 * get participant's data (username, research type, companies, etc)
-	 *
-	 * @returns {object}
-	 */
-	_this.getParticipantData = function() {
-		return participantData;
 	};
 
 	init();

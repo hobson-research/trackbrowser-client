@@ -14,6 +14,7 @@
 		var researchTopicFormEl;
 
 		var researchType;
+		var researchTypeKey;
 		var researchTypeOtherReasonInputEl;
 		var researchCompaniesInputEl;
 
@@ -23,14 +24,17 @@
 			researchCompaniesInputEl = document.getElementById("input-research-company");
 
 			researchTopicFormEl.addEventListener("submit", function(e) {
-				console.log("form submitt");
+				console.log("form submit");
 
-				researchType = document.querySelector("input[type=radio]:checked").value;
+				researchType = document.querySelector("input[type=radio]:checked");
+				researchTypeKey = researchType.dataset.keyword;
+				researchType = researchType.value;
 
 				var msgObject = {
 					researchType: researchType,
+					researchTypeKey: researchTypeKey,
 					researchTypeOtherReason: researchTypeOtherReasonInputEl.value,
-					researchComppanies: researchCompaniesInputEl.value
+					researchCompanies: researchCompaniesInputEl.value
 				};
 
 				console.log(msgObject);
@@ -55,27 +59,27 @@
 				<p class="question"><span class="number">1</span>What research are you doing right now? Research to...</p>
 
 				<div class="item-radio">
-					<input type="radio" name="radioResearchType" id="type-new-company" value="buy a new company">
+					<input type="radio" name="radioResearchType" id="type-new-company" value="buy a new company" data-keyword="buy" checked="checked">
 					<label for="type-new-company">buy a new company</label>
 				</div><!-- // .item-radio -->
 
 				<div class="item-radio">
-					<input type="radio" name="radioResearchType" id="type-increase-position" value="increase a currently held position">
+					<input type="radio" name="radioResearchType" id="type-increase-position" value="increase a currently held position" data-keyword="increase">
 					<label for="type-increase-position">increase a currently held position</label>
 				</div><!-- // .item-radio -->
 
 				<div class="item-radio">
-					<input type="radio" name="radioResearchType" id="type-decrease-position" value="decrease a currently held position">
+					<input type="radio" name="radioResearchType" id="type-decrease-position" value="decrease a currently held position" data-keyword="decrease">
 					<label for="type-decrease-position">decrease a currently held position</label>
 				</div><!-- // .item-radio -->
 
 				<div class="item-radio">
-					<input type="radio" name="radioResearchType" id="type-evaluate-position" value="evaluate a current position">
+					<input type="radio" name="radioResearchType" id="type-evaluate-position" value="evaluate a current position" data-keyword="evaluate">
 					<label for="type-evaluate-position">evaluate a current position</label>
 				</div><!-- // .item-radio -->
 
 				<div class="item-radio">
-					<input type="radio" name="radioResearchType" id="type-others" value="Other, please explain below: ">
+					<input type="radio" name="radioResearchType" id="type-others" value="Other, please explain below: " data-keyword="other">
 					<label for="type-others">Other, please explain below: </label>
 				</div><!-- // .item-radio -->
 

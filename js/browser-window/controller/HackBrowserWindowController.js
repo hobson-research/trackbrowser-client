@@ -14,9 +14,13 @@ function HackBrowserWindowController() {
 	/* ====================================
 	 private member variables
 	 ====================================== */
+	var ipcHandler;
+
 	var menuBar;
 	var addressBar;
 	var browserTabBar;
+	var userInfoBar;
+
 	var contextMenuHandler;
 	var activeTabView;
 	var createdTabViewCount;
@@ -28,10 +32,15 @@ function HackBrowserWindowController() {
 	 private methods
 	 ====================================== */
 	var init = function() {
+		// note that handler for IPC communication be initialized before other view components
+		ipcHandler = new IPCRendererProcessHandler(_this);
+
 		// create a new NavigationControls object associated with current browser window
 		menuBar = new NavigationControls(_this);
 		addressBar = new AddressBar(_this);
 		browserTabBar = new BrowserTabBar(_this);
+		userInfoBar = new UserInfoBar(_this);
+
 		contextMenuHandler = new ContextMenuHandler(_this);
 		createdTabViewCount = 0;
 		openTabViewCount = 0;
@@ -269,6 +278,10 @@ function HackBrowserWindowController() {
 			var currentWindow = remote.getCurrentWindow();
 			currentWindow.close();
 		}
+	};
+
+	_this.getIPCHandler = function() {
+		return ipcHandler;
 	};
 
 	init();
