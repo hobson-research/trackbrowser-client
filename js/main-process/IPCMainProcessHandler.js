@@ -1,55 +1,65 @@
 'use strict';
 
+const ipcMain = require("electron").ipcMain;
+
 /**
  * since there can only be one main process at any point,
  * all methods must be static
  */
-function IPCMainProcessHandler(mainProcessEventEmitter) {
+function IPCMainProcessHandler(mainProcessController) {
 	var _this = this;
 
-	const ipcMain = require("electron").ipcMain;
+	var mainProcessEventEmitter;
 
 	/* ====================================
 	 private methods
 	 ===================================== */
 	var init = function() {
-		userNameCheckHandler();
-		researchTopicHandler();
+		mainProcessEventEmitter = mainProcessController.getMainProcessEventEmitter();
+
+		attachEventHandlers();
 	};
 
-	var userNameCheckHandler = function() {
-		ipcMain.on("userNumberCheck", function(event, arg) {
-			var userName = arg;
-
-			console.log("userNumberCheck message received");
-
-			// TODO: check username logic
-			if (true) {
-				event.sender.send("userNumberCheckResult", true);
-				mainProcessEventEmitter.emit("userNumberCheckPass", userName);
-			} else {
-				event.sender.send("userNumberCheckResult", false);
-			}
-		});
+	var attachEventHandlers = function() {
+		ipcMain.on("userNumberCheck", handleUserNameCheck);
+		ipcMain.on("researchTopicInput", handleResearchTopicInput);
+		ipcMain.on("userDataRequest", handleUserDataRequest);
 	};
 
-	var researchTopicHandler = function() {
-		ipcMain.on("researchTopicInput", function(event, arg) {
-			var msgObj;
+	var handleUserNameCheck = function(event, arg) {
+		var userName = arg;
 
-			console.log("researchTopicInput received");
+		console.log("userNumberCheck message received");
 
-			try {
-				msgObj = JSON.parse(arg);
+		// TODO: check username logic
+		if (true) {
+			event.sender.send("userNumberCheckResult", true);
+			mainProcessEventEmitter.emit("userNumberCheckPass", userName);
+			console.log(mainProcessEventEmitter);
+		} else {
+			event.sender.send("userNumberCheckResult", false);
+		}
+	};
 
-				event.sender.send("researchTopicInputResult", true);
-				mainProcessEventEmitter.emit("researchTopicInputComplete", msgObj);
-			} catch (err) {
-				console.log("Error parsing research topic input IPC message (invalid JSON format)");
+	var handleResearchTopicInput = function(event, arg) {
+		var msgObj;
 
-				event.sender.send("researchTopicInputResult", false);
-			};
-		});
+		console.log("researchTopicInput received");
+
+		try {
+			msgObj = JSON.parse(arg);
+
+			event.sender.send("researchTopicInputResult", true);
+			mainProcessEventEmitter.emit("researchTopicInputComplete", msgObj);
+		} catch (err) {
+			console.log("Error parsing research topic input IPC message (invalid JSON format)");
+
+			event.sender.send("researchTopicInputResult", false);
+		};
+	};
+
+	var handleUserDataRequest = function(event, arg) {
+
 	};
 
 	init();

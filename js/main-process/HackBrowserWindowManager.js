@@ -9,8 +9,10 @@ const PersistentStorage = require(__app.basePath + "/js/common/PersistentStorage
  *
  * @constructor
  */
-function HackBrowserWindowManager(mainProcessEventEmitter) {
+function HackBrowserWindowManager(mainProcessController) {
 	var _this = this;
+
+	var mainProcessEventEmitter;
 
 	var browserWindowList = {};
 	var createdWindowCount = 0;
@@ -24,6 +26,8 @@ function HackBrowserWindowManager(mainProcessEventEmitter) {
 	 private methods
 	 ====================================== */
 	var init = function() {
+		mainProcessEventEmitter = mainProcessController.getMainProcessEventEmitter();
+
 		mainProcessEventEmitter.on("userNumberCheckPass", function(userName) {
 			console.log("userNameCheckPass event received");
 
@@ -99,7 +103,7 @@ function HackBrowserWindowManager(mainProcessEventEmitter) {
 
 		loginWindow.loadURL("file://" + __app.basePath + "/html-pages/login.html");
 
-		// loginWindow.openDevTools();
+		loginWindow.openDevTools();
 
 		callback();
 	};
@@ -122,7 +126,7 @@ function HackBrowserWindowManager(mainProcessEventEmitter) {
 
 		researchTopicWindow.loadURL("file://" + __app.basePath + "/html-pages/research-topic.html");
 
-		// researchTopicWindow.openDevTools();
+		researchTopicWindow.openDevTools();
 
 		callback();
 	};
