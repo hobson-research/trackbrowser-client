@@ -14,27 +14,42 @@ function IPCMainProcessHandler(mainProcessEventEmitter) {
 	 ===================================== */
 	var init = function() {
 		userNameCheckHandler();
+		researchTopicHandler();
 	};
 
 	var userNameCheckHandler = function() {
-		ipcMain.on("userNameCheck", function(event, arg) {
-			var msgObj;
+		ipcMain.on("userNumberCheck", function(event, arg) {
+			var userName = arg;
 
-			console.log("userNameCheck message received");
+			console.log("userNumberCheck message received");
 
-			try {
-				msgObj = JSON.stringify(arg);
-
-				console.log("Received asynchronous-message");
-				console.log(msgObj);
-
-				event.sender.send("userNameCheckResult", true);
-				mainProcessEventEmitter.emit("userNameCheckPass");
-			} catch (e) {
-				event.sender.send("userNameCheckResult", false);
+			// TODO: check username logic
+			if (true) {
+				event.sender.send("userNumberCheckResult", true);
+				mainProcessEventEmitter.emit("userNumberCheckPass", userName);
+			} else {
+				event.sender.send("userNumberCheckResult", false);
 			}
 		});
+	};
 
+	var researchTopicHandler = function() {
+		ipcMain.on("researchTopicInput", function(event, arg) {
+			var msgObj;
+
+			console.log("researchTopicInput received");
+
+			try {
+				msgObj = JSON.parse(arg);
+
+				event.sender.send("researchTopicInputResult", true);
+				mainProcessEventEmitter.emit("researchTopicInputComplete", msgObj);
+			} catch (err) {
+				console.log("Error parsing research topic input IPC message (invalid JSON format)");
+
+				event.sender.send("researchTopicInputResult", false);
+			};
+		});
 	};
 
 	init();

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Track Browser</title>
+
+	<link rel="stylesheet" href="css/cssreset-min.css">
+	<link rel="stylesheet" href="css/research-topic.css">
+
+	<script>
+		'use strict';
+
+		const ipcRenderer = require("electron").ipcRenderer;
+
+		var researchTopicFormEl;
+
+		var researchType;
+		var researchTypeOtherReasonInputEl;
+		var researchCompaniesInputEl;
+
+		document.addEventListener("DOMContentLoaded", function() {
+			researchTopicFormEl = document.getElementById("research-topic-form");
+			researchTypeOtherReasonInputEl = document.getElementById("input-reason-others");
+			researchCompaniesInputEl = document.getElementById("input-research-company");
+
+			researchTopicFormEl.addEventListener("submit", function(e) {
+				console.log("form submitt");
+
+				researchType = document.querySelector("input[type=radio]:checked").value;
+
+				var msgObject = {
+					researchType: researchType,
+					researchTypeOtherReason: researchTypeOtherReasonInputEl.value,
+					researchComppanies: researchCompaniesInputEl.value
+				};
+
+				console.log(msgObject);
+
+				ipcRenderer.send("researchTopicInput", JSON.stringify(msgObject));
+
+				ipcRenderer.on("researchTopicInputResult", function(e, arg) {
+					console.log(e);
+					console.log(arg);
+				});
+
+				e.preventDefault();
+			});
+		});
+	</script>
+</head>
+<body>
+<div id="research-topic-wrapper">
+	<form id="research-topic-form">
+		<div id="research-topic-inputs-wrapper">
+			<div id="item-research-type" class="item">
+				<p class="question"><span class="number">1</span>What research are you doing right now? Research to...</p>
+
+				<div class="item-radio">
+					<input type="radio" name="radioResearchType" id="type-new-company" value="buy a new company">
+					<label for="type-new-company">buy a new company</label>
+				</div><!-- // .item-radio -->
+
+				<div class="item-radio">
+					<input type="radio" name="radioResearchType" id="type-increase-position" value="increase a currently held position">
+					<label for="type-increase-position">increase a currently held position</label>
+				</div><!-- // .item-radio -->
+
+				<div class="item-radio">
+					<input type="radio" name="radioResearchType" id="type-decrease-position" value="decrease a currently held position">
+					<label for="type-decrease-position">decrease a currently held position</label>
+				</div><!-- // .item-radio -->
+
+				<div class="item-radio">
+					<input type="radio" name="radioResearchType" id="type-evaluate-position" value="evaluate a current position">
+					<label for="type-evaluate-position">evaluate a current position</label>
+				</div><!-- // .item-radio -->
+
+				<div class="item-radio">
+					<input type="radio" name="radioResearchType" id="type-others" value="Other, please explain below: ">
+					<label for="type-others">Other, please explain below: </label>
+				</div><!-- // .item-radio -->
+
+				<input type="text" id="input-reason-others" placeholder="Other reason(s)" />
+			</div>
+
+			<div class="item last">
+				<p class="question"><span class="number">2</span>What company(ies) are you researching?</p>
+
+				<input type="text" id="input-research-company" placeholder="Google, Facebook" />
+			</div><!-- // .item -->
+		</div><!-- // #research-topic-inputs-wrapper -->
+
+		<input type="submit" id="submit" value="Start Browsing" />
+	</form><!-- // #research-topic-form -->
+</div><!-- // #research-topic-wrapper -->
+</body>
+</html>

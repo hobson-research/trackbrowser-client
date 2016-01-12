@@ -12,16 +12,47 @@ const PersistentStorage = require(__app.basePath + "/js/common/PersistentStorage
 function HackBrowserWindowManager(mainProcessEventEmitter) {
 	var _this = this;
 
-	var windowList = {};
+	var browserWindowList = {};
 	var createdWindowCount = 0;
+
+	var loginWindow;
+	var researchTopicWindow;
+
+	var participantData = {};
 
 	/* ====================================
 	 private methods
 	 ====================================== */
 	var init = function() {
-		mainProcessEventEmitter.on("userNameCheckPass", function() {
+		mainProcessEventEmitter.on("userNumberCheckPass", function(userName) {
 			console.log("userNameCheckPass event received");
-			_this.openNewBrowserWindow();
+
+			// set username
+			participantData["userName"] = userName;
+			console.log("participantData");
+			console.log(participantData);
+
+			_this.openResearchTopicWindow();
+
+			// close login window
+			loginWindow.close();
+		});
+
+		mainProcessEventEmitter.on("researchTopicInputComplete", function(researchTopicData) {
+			console.log("researchTopicInputComplete");
+
+			for (var key in researchTopicData) {
+				if (researchTopicData.hasOwnProperty(key)) {
+					participantData[key] = researchTopicData[key];
+				}
+			}
+			console.log("participantData");
+			console.log(participantData);
+
+			_this.openNewBrowserWindow(function() {
+				// close research input window
+				researchTopicWindow.close();
+			});
 		});
 	};
 
@@ -41,12 +72,12 @@ function HackBrowserWindowManager(mainProcessEventEmitter) {
 			PersistentStorage.setItem("browserWindowSize", sizeObject);
 		});
 
-		// remove the window from windowList and remove reference so that GC clear is from memory
+		// remove the window from browserWindowList and remove reference so that GC clear is from memory
 		browserWindow.on('closed', function() {
-			if (windowList.hasOwnProperty(windowId)) {
+			if (browserWindowList.hasOwnProperty(windowId)) {
 				console.log("deleting window " + windowId);
 
-				delete windowList[windowId];
+				delete browserWindowList[windowId];
 				browserWindow = null;
 			}
 		});
@@ -55,29 +86,50 @@ function HackBrowserWindowManager(mainProcessEventEmitter) {
 	/* ====================================
 	 public methods
 	 ====================================== */
-	_this.openLoginWindow = function() {
+	_this.openLoginWindow = function(callback) {
+		callback = callback || function() {};
+
 		// Create the login window
-		var loginWindow = new BrowserWindow({
+		loginWindow = new BrowserWindow({
 			width:600,
 			height: 400,
 			resizable: false,
 			frame: false
 		});
 
-		loginWindow.loadUrl("file://" + __app.basePath + "/html-pages/login.html");
+		loginWindow.loadURL("file://" + __app.basePath + "/html-pages/login.html");
 
-		loginWindow.openDevTools();
+		// loginWindow.openDevTools();
+
+		callback();
 	};
 
-	_this.openPictureDisplayWindow = function() {
+	_this.openPictureDisplayWindow = function(callback) {
+		callback = callback || function() {};
 
+		callback();
 	};
 
-	_this.openResearchTopicWindow = function() {
+	_this.openResearchTopicWindow = function(callback) {
+		callback = callback || function() {};
 
+		researchTopicWindow = new BrowserWindow({
+			width: 700,
+			height: 600,
+			resizable: false,
+			frame: false
+		});
+
+		researchTopicWindow.loadURL("file://" + __app.basePath + "/html-pages/research-topic.html");
+
+		// researchTopicWindow.openDevTools();
+
+		callback();
 	};
 
-	_this.openNewBrowserWindow = function(url) {
+	_this.openNewBrowserWindow = function(callback) {
+		callback = callback || function() {};
+
 		// get last browser size
 		PersistentStorage.getItem("browserWindowSize", function(err, browserSize) {
 			if (err) {
@@ -100,12 +152,23 @@ function HackBrowserWindowManager(mainProcessEventEmitter) {
 			// Open the DevTools (debugging)
 			newWindow.webContents.openDevTools();
 
-			windowList[newWindow.id] = newWindow;
+			browserWindowList[newWindow.id] = newWindow;
 			attachEventHandlers(newWindow);
 
 			// increase window count
 			createdWindowCount++;
+
+			callback();
 		});
+	};
+
+	/**
+	 * get participant's data (username, research type, companies, etc)
+	 *
+	 * @returns {object}
+	 */
+	_this.getParticipantData = function() {
+		return participantData;
 	};
 
 	init();

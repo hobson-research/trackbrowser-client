@@ -12,19 +12,19 @@
 		const ipcRenderer = require("electron").ipcRenderer;
 
 		var loginFormEl;
-		var userNameInputEl;
+		var userNumberInputEl;
 		var userNameVal;
 
 		document.addEventListener("DOMContentLoaded", function() {
 			loginFormEl = document.getElementById("login-form");
-			userNameInputEl = document.getElementById("input-username");
+			userNumberInputEl = document.getElementById("input-user-number");
 
 			loginFormEl.addEventListener("submit", function(e) {
-				var userNameVal = userNameInputEl.value;
+				var userNumberValue = userNumberInputEl.value;
 
-				ipcRenderer.send("userNameCheck", userNameVal);
+				ipcRenderer.send("userNumberCheck", userNumberValue);
 
-				ipcRenderer.on("userNameCheckResult", function(e, arg) {
+				ipcRenderer.on("userNumberCheckResult", function(e, arg) {
 					console.log(e);
 					console.log(arg);
 				});
@@ -35,16 +35,16 @@
 	</script>
 </head>
 <body id="body-login">
-	<div id="login-wrapper">
-		<form id="login-form">
-			<div id="login-input-wrapper">
-				<p class="desc">Your browsing data will be tracked for research purposes. Please enter your username to continue browsing. </p>
+<div id="login-wrapper">
+	<form id="login-form">
+		<div id="login-input-wrapper">
+			<p class="desc">Your browsing data will be tracked for research purposes. Please enter your user number to continue. </p>
 
-				<input type="text" id="input-username" placeholder="Username" />
-			</div><!-- // #login-input-wrapper -->
+			<input type="text" id="input-user-number" placeholder="User number" />
+		</div><!-- // #login-input-wrapper -->
 
-			<input type="submit" id="submit" value="Start Browsing" />
-		</form><!-- // #login-form -->
-	</div><!-- // #login-wrapper -->
+		<input type="submit" id="submit" value="Start Browsing" />
+	</form><!-- // #login-form -->
+</div><!-- // #login-wrapper -->
 </body>
 </html>

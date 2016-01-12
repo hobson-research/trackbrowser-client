@@ -41,6 +41,7 @@ var startBrowser = function() {
 		function(response) {
 			if (response.statusCode === 200) {
 				windowManager.openLoginWindow();
+				// windowManager.openNewBrowserWindow();
 			}
 		}
 	);
