@@ -44,6 +44,22 @@ function IPCRendererProcessHandler(hackBrowserWindow) {
 		ipcRenderer.on("userInfoResponse", function(e, userInfo) {
 			callback(userInfo);
 		});
+	};
+
+	_this.sendNavigationData = function(tabViewId, url, callback) {
+		var sendMsgObj = {
+			tabViewId: tabViewId,
+			url: url
+		};
+
+		ipcRenderer.send("navigationData", JSON.stringify(sendMsgObj));
+		ipcRenderer.on("navigationDataRecorded", function(e, result) {
+			callback(result);
+		});
+	};
+
+	_this.sendScreenshotData = function(tabViewId, url, fileName, callback) {
+
 	}
 
 	init();

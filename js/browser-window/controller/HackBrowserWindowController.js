@@ -7,7 +7,8 @@
  * @constructor
  */
 function HackBrowserWindowController() {
-	const remote = require('electron').remote;
+	const remote = require("electron").remote;
+	const fs = require("fs");
 
 	var _this = this;
 
@@ -27,6 +28,8 @@ function HackBrowserWindowController() {
 	var openTabViewCount;
 	var tabList;
 
+	var isTrackingOn;
+
 
 	/* ====================================
 	 private methods
@@ -45,6 +48,8 @@ function HackBrowserWindowController() {
 		createdTabViewCount = 0;
 		openTabViewCount = 0;
 		tabList = {};
+
+		isTrackingOn = true;
 
 		_this.addNewTab("http://www.google.com/", true);
 
@@ -190,7 +195,6 @@ function HackBrowserWindowController() {
 		return contextMenuHandler;
 	};
 
-
 	/**
 	 * increment total number of created tabs including closed ones
 	 * this method should be exposed publicly in case a new tab is created programmatically
@@ -282,6 +286,32 @@ function HackBrowserWindowController() {
 
 	_this.getIPCHandler = function() {
 		return ipcHandler;
+	};
+
+	/**
+	 * take screenshot of active <webview> element
+	 *
+	 * @param {function} callback after taking the screenshot is complete
+	 */
+	_this.captureActiveWebView = function(callback) {
+		var captureDate = new Date();
+
+		var filePath = "session_data" + path.sep + "screenshots" + path.sep + "capture_" + captureDate.getFullYear() + pad((captureDate.getMonth() + 1), 2) + pad(captureDate.getDate(), 2) + "_" + pad(captureDate.getHours(), 2) + pad(captureDate.getMinutes(), 2) + pad(captureDate.getSeconds(), 2) + ".png";
+		remote.getCurrentWindow().capturePage(function(img) {
+			(function() {
+				fs.writeFile(filePath, img.toPng(), function(err) {
+					if (err) {
+						console.log("[HackBrowserWindowController] Error generating screenshot file");
+					};
+
+					callback(filePath);
+				});
+			});
+		});
+	};
+
+	_this.checkTrackingOn = function() {
+		return isTrackingOn;
 	};
 
 	init();

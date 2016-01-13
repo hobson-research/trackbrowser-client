@@ -27,10 +27,13 @@ function HackBrowserWindowManager(mainProcessController) {
 	var init = function() {
 		mainProcessEventEmitter = mainProcessController.getMainProcessEventEmitter();
 
-		mainProcessEventEmitter.on("userNumberCheckPass", function(userNumber) {
+		mainProcessEventEmitter.on("userNumberCheckPass", function(userName) {
 			console.log("userNameCheckPass event received");
 
-			mainProcessController.setParticipantDataItem("userNumber", userNumber);
+			mainProcessController.setParticipantDataItem("userNumber", userName);
+
+			// also set userName in ActivityRecorder
+			mainProcessController.getActivityRecorder().setParticipantUserName(userName);
 
 			_this.openResearchTopicWindow();
 
@@ -148,7 +151,7 @@ function HackBrowserWindowManager(mainProcessController) {
 			newWindow.loadURL("file://" + __app.basePath + "/html-pages/browser-window.html");
 
 			// Open the DevTools (debugging)
-			// newWindow.webContents.openDevTools();
+			newWindow.openDevTools();
 
 			browserWindowList[newWindow.id] = newWindow;
 			attachEventHandlers(newWindow);

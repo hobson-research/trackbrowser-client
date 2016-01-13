@@ -65,7 +65,7 @@ function MainProcessController() {
 		mainProcessEventEmitter = new EventEmitter();
 
 		windowManager = new HackBrowserWindowManager(_this);
-		recorder = new ActivityRecorder();
+		recorder = new ActivityRecorder(_this);
 		ipcHandler = new IPCMainProcessHandler(_this);
 
 		recorder.checkServerAlive(
@@ -95,6 +95,10 @@ function MainProcessController() {
 		participantData[key] = value;
 	};
 
+	_this.getParticipantUserName = function() {
+		return participantData.userNumber;
+	};
+
 	/**
 	 * get participant's data (username, research type, companies, etc)
 	 *
@@ -102,6 +106,10 @@ function MainProcessController() {
 	 */
 	_this.getParticipantData = function() {
 		return participantData;
+	};
+
+	_this.getActivityRecorder = function() {
+		return recorder;
 	};
 };
 

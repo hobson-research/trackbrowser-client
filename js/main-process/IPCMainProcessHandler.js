@@ -24,6 +24,7 @@ function IPCMainProcessHandler(mainProcessController) {
 		ipcMain.on("userNumberCheck", handleUserNumberCheck);
 		ipcMain.on("researchTopicInput", handleResearchTopicInput);
 		ipcMain.on("userInfoRequest", handleUserInfoRequest);
+		ipcMain.on("navigationData", handleNavigationData);
 	};
 
 	var handleUserNumberCheck = function(event, arg) {
@@ -59,6 +60,12 @@ function IPCMainProcessHandler(mainProcessController) {
 
 	var handleUserInfoRequest = function(event, arg) {
 		event.sender.send("userInfoResponse", JSON.stringify(mainProcessController.getParticipantData()));
+	};
+
+	var handleNavigationData = function(event, arg) {
+		var navigationDataObj = JSON.parse(arg);
+
+		mainProcessController.getActivityRecorder().recordNavigation(navigationDataObj.tabViewId, navigationDataObj.url);
 	};
 
 	init();

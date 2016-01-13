@@ -24,6 +24,7 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 	var tabViewId;
 	var browserTab;
 	var isDOMReady;
+	var isWaitingForScreenshotWhenActivated;
 
 
 	/* ====================================
@@ -41,6 +42,7 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 		webViewWrapperEl = document.getElementById("webview-wrapper");
 		isDOMReady = false;
 		tabViewId = "wv-" + hackBrowserWindow.getCreatedTabViewCount();
+		isWaitingForScreenshotWhenActivated = false;
 
 		// increase created tab view count
 		hackBrowserWindow.incrementCreatedTabViewCount();
@@ -106,7 +108,27 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 
 	var handleDidFrameFinishLoad = function(e) {
 		console.log("[" + tabViewId + "] did-frame-finish-load");
-		webViewURL = webViewEl.getURL();
+
+		// if Main Frame
+		if (e.isMainFrame) {
+			webViewURL = webViewEl.getURL();
+
+			return;
+
+			if (hackBrowserWindow.getTrackingModeOnOff() === true) {
+				if (hackBrowserWindow.getActiveTabView() === _this) {
+					hackBrowserWindow.captureActiveWebView(function(imgPath) {
+
+					});
+				}
+
+				else {
+					isWaitingForScreenshotWhenActivated = true;
+				}
+			} else {
+				console.log("Tracking mode is turned off");
+			}
+		}
 	};
 
 	var handleDidStartLoading = function() {
@@ -125,6 +147,13 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 
 		// clear loading icon
 		browserTab.stopLoading();
+
+		// send ipc message to record navigation
+		hackBrowserWindow.getIPCHandler().sendNavigationData(tabViewId, webViewEl.getURL(), function(result) {
+			if (result === true) {
+				console.log("[" + tabViewId + "] navigation data successfully recorded to server");
+			}
+		});
 
 		if (hackBrowserWindow.getActiveTabView() === _this) {
 			hackBrowserWindow.getMenuBar().showReloadBtn();
