@@ -306,13 +306,17 @@ function HackBrowserWindowController() {
 
 					callback(filePath);
 				});
-			});
+			})();
 		});
 	};
 
-	_this.checkTrackingOn = function() {
+	_this.getTrackingOnOff = function() {
 		return isTrackingOn;
 	};
+
+	_this.setTrackingOnOff = function(isOn) {
+		isTrackingOn = isOn;
+	}
 
 	init();
 }

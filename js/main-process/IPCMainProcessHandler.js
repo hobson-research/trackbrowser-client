@@ -21,23 +21,23 @@ function IPCMainProcessHandler(mainProcessController) {
 	};
 
 	var attachEventHandlers = function() {
-		ipcMain.on("userNumberCheck", handleUserNumberCheck);
+		ipcMain.on("userNameCheck", handleUserNameCheck);
 		ipcMain.on("researchTopicInput", handleResearchTopicInput);
 		ipcMain.on("userInfoRequest", handleUserInfoRequest);
 		ipcMain.on("navigationData", handleNavigationData);
 	};
 
-	var handleUserNumberCheck = function(event, arg) {
+	var handleUserNameCheck = function(event, arg) {
 		var userName = arg;
 
-		console.log("userNumberCheck message received");
+		console.log("userNameCheck message received");
 
-		// TODO: check user number check logic
+		// TODO: check username check logic
 		if (true) {
-			event.sender.send("userNumberCheckResult", true);
-			mainProcessEventEmitter.emit("userNumberCheckPass", userName);
+			event.sender.send("userNameCheckResult", true);
+			mainProcessEventEmitter.emit("userNameCheckPass", userName);
 		} else {
-			event.sender.send("userNumberCheckResult", false);
+			event.sender.send("userNameCheckResult", false);
 		}
 	};
 

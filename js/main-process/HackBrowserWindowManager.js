@@ -27,10 +27,10 @@ function HackBrowserWindowManager(mainProcessController) {
 	var init = function() {
 		mainProcessEventEmitter = mainProcessController.getMainProcessEventEmitter();
 
-		mainProcessEventEmitter.on("userNumberCheckPass", function(userName) {
+		mainProcessEventEmitter.on("userNameCheckPass", function(userName) {
 			console.log("userNameCheckPass event received");
 
-			mainProcessController.setParticipantDataItem("userNumber", userName);
+			mainProcessController.setParticipantDataItem("userName", userName);
 
 			// also set userName in ActivityRecorder
 			mainProcessController.getActivityRecorder().setParticipantUserName(userName);

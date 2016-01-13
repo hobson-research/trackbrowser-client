@@ -12,19 +12,19 @@
 		const ipcRenderer = require("electron").ipcRenderer;
 
 		var loginFormEl;
-		var userNumberInputEl;
+		var userNameInputEl;
 		var userNameVal;
 
 		document.addEventListener("DOMContentLoaded", function() {
 			loginFormEl = document.getElementById("login-form");
-			userNumberInputEl = document.getElementById("input-user-number");
+			userNameInputEl = document.getElementById("input-user-name");
 
 			loginFormEl.addEventListener("submit", function(e) {
-				var userNumberValue = userNumberInputEl.value;
+				var userNameValue = userNameInputEl.value;
 
-				ipcRenderer.send("userNumberCheck", userNumberValue);
+				ipcRenderer.send("userNameCheck", userNameValue);
 
-				ipcRenderer.on("userNumberCheckResult", function(e, arg) {
+				ipcRenderer.on("userNameCheckResult", function(e, arg) {
 					console.log(e);
 					console.log(arg);
 				});
@@ -40,10 +40,10 @@
 		<div id="login-input-wrapper">
 			<p class="desc">Your browsing data will be tracked for research purposes. Please enter your user number to continue. </p>
 
-			<input type="text" id="input-user-number" placeholder="User number" />
+			<input type="text" id="input-user-name" placeholder="Username" />
 		</div><!-- // #login-input-wrapper -->
 
-		<input type="submit" id="submit" value="Start Browsing" />
+		<input type="submit" id="submit" value="Continue" />
 	</form><!-- // #login-form -->
 </div><!-- // #login-wrapper -->
 </body>

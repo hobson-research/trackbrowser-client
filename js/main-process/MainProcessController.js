@@ -96,7 +96,7 @@ function MainProcessController() {
 	};
 
 	_this.getParticipantUserName = function() {
-		return participantData.userNumber;
+		return participantData.userName;
 	};
 
 	/**
