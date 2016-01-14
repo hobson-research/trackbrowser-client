@@ -70,6 +70,11 @@ function MainProcessController() {
 		// create a shared EventEmitter for windowManager to communicate with ipcHandler
 		mainProcessEventEmitter = new EventEmitter();
 
+		// TODO: remove this line
+		if (_this.getParticipantUserName() === null) {
+			_this.setParticipantDataItem("userName", "test");
+		}
+
 		windowManager = new HackBrowserWindowManager(_this);
 		recorder = new ActivityRecorder(_this);
 		ipcHandler = new IPCMainProcessHandler(_this);
@@ -82,8 +87,10 @@ function MainProcessController() {
 			},
 			function(response) {
 				if (response.statusCode === 200) {
-					windowManager.openLoginWindow();
-					// windowManager.openNewBrowserWindow();
+					// windowManager.openLoginWindow();
+
+					// for debugging
+					windowManager.openNewBrowserWindow();
 				}
 			}
 		);
@@ -116,6 +123,10 @@ function MainProcessController() {
 
 	_this.getActivityRecorder = function() {
 		return recorder;
+	};
+
+	_this.getWindowManager = function() {
+		return windowManager;
 	};
 }
 

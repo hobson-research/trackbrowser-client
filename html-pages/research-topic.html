@@ -18,6 +18,7 @@
 			var researchTypeKey;
 			var researchTypeOtherReasonInputEl;
 			var researchCompaniesInputEl;
+			var cancelBtnEl;
 
 			var init = function() {
 				attachEventHandlers();
@@ -31,6 +32,7 @@
 				researchTopicFormEl = document.getElementById("research-topic-form");
 				researchTypeOtherReasonInputEl = document.getElementById("input-reason-others");
 				researchCompaniesInputEl = document.getElementById("input-research-company");
+				cancelBtnEl = document.getElementById("cancel");
 
 				ipcRenderer.send("userInfoRequest", true);
 
@@ -39,6 +41,11 @@
 
 					console.log("researchTopicJSON: ");
 					console.log(researchTopicObj);
+
+					// the form already has been initialized
+					if (researchTopicObj.researchType !== null) {
+						cancelBtnEl.value = "Cancel";
+					}
 				});
 
 				researchTopicFormEl.addEventListener("submit", handleResearchTopicFormSubmit);
@@ -117,7 +124,11 @@
 			</div><!-- // .item -->
 		</div><!-- // #research-topic-inputs-wrapper -->
 
-		<input type="submit" id="submit" value="Start Browsing" />
+		<div id="buttons-wrapper">
+			<input type="submit" id="submit" value="Start Browsing" />
+			<input type="button" id="cancel" value="Previous" />
+		</div>
+
 	</form><!-- // #research-topic-form -->
 </div><!-- // #research-topic-wrapper -->
 </body>

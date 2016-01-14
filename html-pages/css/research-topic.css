@@ -33,18 +33,18 @@ a:focus {
 }
 
 .item {
-	padding: 30px 40px;
+	padding: 25px 35px;
 }
 
 .item.last {
-	padding-top: 20px;
+	padding-top: 12px;
 }
 
 p.question {
 	color: #111;
 	font-size: 20px;
-	line-height: 36px;
-	margin-bottom: 15px;
+	line-height: 30px;
+	margin-bottom: 12px;
 }
 
 p.question span.number {
@@ -123,20 +123,26 @@ input[type="text"]:focus {
 	color: #bbb;
 }
 
-input#submit {
-	font-size: 20px;
-	line-height: 38px;
+#buttons-wrapper {
+	width: 100%;
+	padding: 10px;
 	position: absolute;
 	left: 0;
 	bottom: 0;
+	box-sizing: border-box;
+}
+
+input#submit,
+input#cancel {
+	font-size: 20px;
+	line-height: 38px;
 	display: block;
-	width: 680px;
+	width: 100%;
 	text-align: center;
-	padding: 32px 30px;
+	padding: 15px 20px;
 	color: #7d40b8;
 	background: #fff;
 	border: 1px solid #7d40b8;
-	margin: 10px;
 	border-radius: 6px;
 	font-weight: bold;
 	box-sizing: border-box;
@@ -145,7 +151,14 @@ input#submit {
 	outline: none;
 }
 
-input#submit:hover {
+	input#cancel {
+		color: #aaa;
+		border-color: #aaa;
+		margin-top: 10px;
+	}
+
+input#submit:hover,
+input#cancel:hover {
 	color: #000;
 	border-color: #000;
 }

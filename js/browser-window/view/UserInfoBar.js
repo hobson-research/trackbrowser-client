@@ -20,6 +20,7 @@ function UserInfoBar(hackBrowserWindow) {
 	var companiesBoxEl;
 	var companiesTextEl;
 	var trackingStatusBoxEl;
+	var trackingStatusSwitchWrapperEl;
 
 
 	/* ====================================
@@ -34,16 +35,22 @@ function UserInfoBar(hackBrowserWindow) {
 		companiesBoxEl = document.getElementById("box-companies");
 		companiesTextEl = companiesBoxEl.querySelector("p.info");
 		trackingStatusBoxEl = document.getElementById("box-tracking-status");
+		trackingStatusSwitchWrapperEl = document.getElementById("tracking-switch-wrapper");
 
 		hackBrowserWindow.getIPCHandler().requestUserInfo(function(userInfoJSON) {
 			console.log(userInfoJSON);
 
-			var userInfo = JSON.parse(userInfoJSON);
-			var researchTypeText = ((userInfo.researchTypeKey === "other") ? userInfo.researchTypeOtherReason : userInfo.researchType);
+			try {
+				var userInfo = JSON.parse(userInfoJSON);
+				var researchTypeText = ((userInfo.researchTypeKey === "other") ? userInfo.researchTypeOtherReason : userInfo.researchType);
 
-			updateUserName(userInfo.userName);
-			updateResearchType(researchTypeText);
-			updateCompanies(userInfo.researchCompanies);
+				_this.updateUserName(userInfo.userName);
+				_this.updateResearchType(researchTypeText);
+				_this.updateCompanies(userInfo.researchCompanies);
+			} catch (ex) {
+				console.log("invalid JSON returned for user info");
+			}
+
 		});
 
 		attachEventHandlers();
@@ -53,6 +60,30 @@ function UserInfoBar(hackBrowserWindow) {
 	 * attach event handlers for menu bar buttons
 	 */
 	var attachEventHandlers = function() {
+		researchTypeBoxEl.addEventListener("click", handleResearchTypeBoxClick);
+		companiesBoxEl.addEventListener("click", handleCompaniesBoxClick);
+		trackingStatusBoxEl.addEventListener("click", handleTrackingStatusBoxClick);
+	};
+
+	var handleResearchTypeBoxClick = function(e) {
+		hackBrowserWindow.getIPCHandler().requestResearchTopicWindowOpen();
+
+		e.preventDefault();
+	};
+
+	var handleCompaniesBoxClick = function(e) {
+		hackBrowserWindow.getIPCHandler().requestResearchTopicWindowOpen();
+
+		e.preventDefault();
+	};
+
+	var handleTrackingStatusBoxClick = function(e) {
+		e.preventDefault();
+
+		toggleTrackingMode();
+	};
+
+	var toggleTrackingMode = function() {
 
 	};
 
@@ -60,18 +91,25 @@ function UserInfoBar(hackBrowserWindow) {
 	 public methods
 	 ====================================== */
 
-	var updateUserName = function(val) {
+	_this.updateUserName = function(val) {
 		userNameTextEl.textContent = val;
 	};
 
-	var updateResearchType = function(val) {
+	_this.updateResearchType = function(val) {
 		researchTypeTextEl.textContent = val;
 	};
 
-	var updateCompanies = function(val) {
+	_this.updateCompanies = function(val) {
 		companiesTextEl.textContent = val;
 	};
 
+	_this.setTrackingMode = function(enable) {
+		if (enable === true) {
+			trackingStatusSwitchWrapperEl.classList.add("on");
+		} else {
+			trackingStatusSwitchWrapperEl.classList.remove("on");
+		}
+	};
 
 	init();
 }

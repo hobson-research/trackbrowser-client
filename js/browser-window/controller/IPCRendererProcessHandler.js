@@ -55,6 +55,15 @@ function IPCRendererProcessHandler(hackBrowserWindow) {
 		});
 	};
 
+	_this.requestResearchTopicWindowOpen = function(callback) {
+		console.log("IPCRendererProcessHandler.requestResearchTopicWindowOpen()");
+
+		ipcRenderer.send("researchTopicWindowOpenRequest", true);
+		ipcRenderer.on("researchTopicWindowOpenResponse", function(e, result) {
+			callback(result);
+		});
+	};
+
 	_this.sendNavigationData = function(tabViewId, url, callback) {
 		var sendMsgObj = {
 			tabViewId: tabViewId,

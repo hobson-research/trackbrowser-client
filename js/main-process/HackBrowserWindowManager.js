@@ -115,7 +115,7 @@ function HackBrowserWindowManager(mainProcessController) {
 		callback = callback || function() {};
 
 		researchTopicWindow = new BrowserWindow({
-			width: 700,
+			width: 600,
 			height: 600,
 			resizable: false,
 			frame: false

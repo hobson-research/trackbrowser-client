@@ -23,6 +23,7 @@ function IPCMainProcessHandler(mainProcessController) {
 	var attachEventHandlers = function() {
 		ipcMain.on("userNameCheck", handleUserNameCheck);
 		ipcMain.on("dataPathRequest", handleDataPathRequest);
+		ipcMain.on("researchTopicWindowOpenRequest", handleResearchTopicWindowOpenRequest);
 		ipcMain.on("researchTopicInput", handleResearchTopicInput);
 		ipcMain.on("userInfoRequest", handleUserInfoRequest);
 		ipcMain.on("navigationData", handleNavigationData);
@@ -45,6 +46,12 @@ function IPCMainProcessHandler(mainProcessController) {
 
 	var handleDataPathRequest = function(event, arg) {
 		event.sender.send("dataPathResponse", GLOBAL.__app.dataPath);
+	};
+
+	var handleResearchTopicWindowOpenRequest = function(event, arg) {
+		mainProcessController.getWindowManager().openResearchTopicWindow();
+
+		event.sender.send("researchTopicWindowOpenResponse", true);
 	};
 
 	var handleResearchTopicInput = function(event, arg) {
