@@ -58,8 +58,21 @@ function IPCRendererProcessHandler(hackBrowserWindow) {
 	_this.requestResearchTopicWindowOpen = function(callback) {
 		console.log("IPCRendererProcessHandler.requestResearchTopicWindowOpen()");
 
+		callback = callback || function() {};
+
 		ipcRenderer.send("researchTopicWindowOpenRequest", true);
 		ipcRenderer.on("researchTopicWindowOpenResponse", function(e, result) {
+			callback(result);
+		});
+	};
+
+	_this.requestHelpWindowOpen = function(callback) {
+		console.log("IPCRendererProcessHandler.requestHelpWindowOpen()");
+
+		callback = callback || function() {};
+
+		ipcRenderer.send("helpWindowOpenRequest", true);
+		ipcRenderer.on("helpWindowOpenResponse", function(e, result) {
 			callback(result);
 		});
 	};

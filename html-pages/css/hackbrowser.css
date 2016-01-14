@@ -273,8 +273,12 @@ input#address-bar {
 .box#box-link-help {
 	color: #fff;
 	left: 520px;
-	width: 160px;
+	width: 180px;
 }
+
+	.box#box-link-help-status p.info {
+		width: 150px;
+	}
 
 	.box#box-link-help i {
 		position: absolute;

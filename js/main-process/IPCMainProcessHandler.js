@@ -27,7 +27,7 @@ function IPCMainProcessHandler(mainProcessController) {
 		ipcMain.on("researchTopicInput", handleResearchTopicInput);
 		ipcMain.on("userInfoRequest", handleUserInfoRequest);
 		ipcMain.on("navigationData", handleNavigationData);
-
+		ipcMain.on("helpWindowOpenRequest", handleHelpWindowOpenRequest);
 	};
 
 	var handleUserNameCheck = function(event, arg) {
@@ -52,6 +52,12 @@ function IPCMainProcessHandler(mainProcessController) {
 		mainProcessController.getWindowManager().openResearchTopicWindow();
 
 		event.sender.send("researchTopicWindowOpenResponse", true);
+	};
+
+	var handleHelpWindowOpenRequest = function(event, arg) {
+		mainProcessController.getWindowManager().openHelpWindow();
+
+		event.sender.send("helpWindowOpenResponse", true);
 	};
 
 	var handleResearchTopicInput = function(event, arg) {

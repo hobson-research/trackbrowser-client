@@ -163,6 +163,23 @@ function HackBrowserWindowManager(mainProcessController) {
 		});
 	};
 
+	_this.openHelpWindow = function(callback) {
+		callback = callback || function() {};
+
+		researchTopicWindow = new BrowserWindow({
+			width: 700,
+			height: 600,
+			resizable: false,
+			frame: false
+		});
+
+		researchTopicWindow.loadURL("file://" + __app.basePath + "/html-pages/help.html");
+
+		researchTopicWindow.openDevTools();
+
+		callback();
+	};
+
 	init();
 }
 
