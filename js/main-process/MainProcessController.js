@@ -18,7 +18,13 @@ function MainProcessController() {
 	var ipcHandler;
 	var mainProcessEventEmitter;
 
-	var participantData = {};
+	var participantData = {
+		userName: null,
+		researchType: null,
+		researchTypeKey: null,
+		researchTypeOtherReason: null,
+		researchCompanies: null
+	};
 
 	var init = function() {
 		attachEventHandlers();
@@ -111,6 +117,6 @@ function MainProcessController() {
 	_this.getActivityRecorder = function() {
 		return recorder;
 	};
-};
+}
 
 module.exports = MainProcessController;

@@ -78,6 +78,9 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 		webViewEl.addEventListener("page-title-updated", handlePageTitleUpdated);
 		webViewEl.addEventListener("page-favicon-updated", handlePageFaviconUpdated);
 		webViewEl.addEventListener("new-window", handleNewWindow);
+		webViewEl.addEventListener("will-navigate", handleWillNavigate);
+		webViewEl.addEventListener("did-navigate", handleDidNavigate);
+		webViewEl.addEventListener("did-navigate-in-page", handleDidNavigateInPage);
 		webViewEl.addEventListener("console-message", handleConsoleMessage);
 	};
 
@@ -109,24 +112,7 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 	var handleDidFrameFinishLoad = function(e) {
 		console.log("[" + tabViewId + "] did-frame-finish-load");
 
-		// if Main Frame
-		if (e.isMainFrame) {
-			webViewURL = webViewEl.getURL();
-
-			if (hackBrowserWindow.getTrackingOnOff() === true) {
-				if (hackBrowserWindow.getActiveTabView() === _this) {
-					hackBrowserWindow.captureActiveWebView(function(imgPath) {
-
-					});
-				}
-
-				else {
-					isWaitingForScreenshotWhenActivated = true;
-				}
-			} else {
-				console.log("Tracking mode is turned off");
-			}
-		}
+		webViewURL = webViewEl.getURL();
 	};
 
 	var handleDidStartLoading = function() {
@@ -152,6 +138,21 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 				console.log("[" + tabViewId + "] navigation data successfully recorded to server");
 			}
 		});
+
+		// take screenshot and notify main process via ipc
+		if (hackBrowserWindow.getTrackingOnOff() === true) {
+			if (hackBrowserWindow.getActiveTabView() === _this) {
+				hackBrowserWindow.captureActiveWebView(function(imgPath) {
+
+				});
+			}
+
+			else {
+				isWaitingForScreenshotWhenActivated = true;
+			}
+		} else {
+			console.log("Tracking mode is turned off");
+		}
 
 		if (hackBrowserWindow.getActiveTabView() === _this) {
 			hackBrowserWindow.getMenuBar().showReloadBtn();
@@ -196,7 +197,7 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 		if (hackBrowserWindow.getActiveTabView() === _this) {
 			hackBrowserWindow.updateWindowTitle(webViewTitle);
 		}
-	}
+	};
 
 	var handlePageFaviconUpdated = function(e) {
 		console.log("[" + tabViewId + "] page-favicon-updated");
@@ -204,6 +205,31 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 		// the last element in favicons array is used
 		// TODO: if multiple favicon items are returned and last element is invalid, use other ones
 		_this.updateTabFavicon(e.favicons[e.favicons.length - 1]);
+	};
+
+	var handleNewWindow = function(e) {
+		console.log("[" + tabViewId + "] new-window");
+
+		hackBrowserWindow.addNewTab(e.url, true);
+
+		console.log(e);
+	};
+
+	var handleWillNavigate = function(e) {
+		console.log("[" + tabViewId + "] will-navigate");
+		console.log(e);
+	};
+
+	var handleDidNavigate = function(e) {
+		console.log("[" + tabViewId + "] did-navigate");
+		console.log(e);
+
+		webViewURL = e.url;
+	};
+
+	var handleDidNavigateInPage = function(e) {
+		console.log("[" + tabViewId + "] did-navigate-in-page");
+		console.log(e);
 	};
 
 	var handleConsoleMessage = function(e) {
@@ -235,14 +261,6 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 				// since the console-message is not a HackBrowser message, do nothing
 			}
 		}
-	};
-
-	var handleNewWindow = function(e) {
-		console.log("[" + tabViewId + "] new-window");
-
-		hackBrowserWindow.addNewTab(e.url, true);
-
-		console.log(e);
 	};
 
 

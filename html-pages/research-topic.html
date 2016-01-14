@@ -7,23 +7,44 @@
 	<link rel="stylesheet" href="css/research-topic.css">
 
 	<script>
-		'use strict';
+		(function() {
+			'use strict';
 
-		const ipcRenderer = require("electron").ipcRenderer;
+			const ipcRenderer = require("electron").ipcRenderer;
 
-		var researchTopicFormEl;
+			var researchTopicFormEl;
 
-		var researchType;
-		var researchTypeKey;
-		var researchTypeOtherReasonInputEl;
-		var researchCompaniesInputEl;
+			var researchType;
+			var researchTypeKey;
+			var researchTypeOtherReasonInputEl;
+			var researchCompaniesInputEl;
 
-		document.addEventListener("DOMContentLoaded", function() {
-			researchTopicFormEl = document.getElementById("research-topic-form");
-			researchTypeOtherReasonInputEl = document.getElementById("input-reason-others");
-			researchCompaniesInputEl = document.getElementById("input-research-company");
+			var init = function() {
+				attachEventHandlers();
+			};
 
-			researchTopicFormEl.addEventListener("submit", function(e) {
+			var attachEventHandlers = function() {
+				document.addEventListener("DOMContentLoaded", handleDOMContentLoaded);
+			};
+
+			var handleDOMContentLoaded = function() {
+				researchTopicFormEl = document.getElementById("research-topic-form");
+				researchTypeOtherReasonInputEl = document.getElementById("input-reason-others");
+				researchCompaniesInputEl = document.getElementById("input-research-company");
+
+				ipcRenderer.send("userInfoRequest", true);
+
+				ipcRenderer.on("userInfoResponse", function(e, researchTopicJSON) {
+					var researchTopicObj = JSON.parse(researchTopicJSON);
+
+					console.log("researchTopicJSON: ");
+					console.log(researchTopicObj);
+				});
+
+				researchTopicFormEl.addEventListener("submit", handleResearchTopicFormSubmit);
+			};
+
+			var handleResearchTopicFormSubmit = function(e) {
 				console.log("form submit");
 
 				researchType = document.querySelector("input[type=radio]:checked");
@@ -47,8 +68,11 @@
 				});
 
 				e.preventDefault();
-			});
-		});
+
+			};
+
+			init();
+		})();
 	</script>
 </head>
 <body>

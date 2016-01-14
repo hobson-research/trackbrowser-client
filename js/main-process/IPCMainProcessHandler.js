@@ -61,7 +61,7 @@ function IPCMainProcessHandler(mainProcessController) {
 			console.log("Error parsing research topic input IPC message (invalid JSON format)");
 
 			event.sender.send("researchTopicInputResult", false);
-		};
+		}
 	};
 
 	var handleUserInfoRequest = function(event, arg) {

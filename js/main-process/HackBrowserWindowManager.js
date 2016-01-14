@@ -123,7 +123,7 @@ function HackBrowserWindowManager(mainProcessController) {
 
 		researchTopicWindow.loadURL("file://" + __app.basePath + "/html-pages/research-topic.html");
 
-		// researchTopicWindow.openDevTools();
+		researchTopicWindow.openDevTools();
 
 		callback();
 	};
