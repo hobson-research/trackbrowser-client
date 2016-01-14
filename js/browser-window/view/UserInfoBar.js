@@ -13,8 +13,8 @@ function UserInfoBar(hackBrowserWindow) {
 	 private member variables
 	 ====================================== */
 	var userInfoBarEl;
-	var userNumberBoxEl;
-	var userNumberTextEl;
+	var userNameBoxEl;
+	var userNameTextEl;
 	var researchTypeBoxEl;
 	var researchTypeTextEl;
 	var companiesBoxEl;
@@ -27,8 +27,8 @@ function UserInfoBar(hackBrowserWindow) {
 	 ====================================== */
 	var init = function() {
 		userInfoBarEl = document.getElementById("user-info-bar");
-		userNumberBoxEl = document.getElementById("box-user-number");
-		userNumberTextEl = userNumberBoxEl.querySelector("p.info");
+		userNameBoxEl = document.getElementById("box-user-name");
+		userNameTextEl = userNameBoxEl.querySelector("p.info");
 		researchTypeBoxEl = document.getElementById("box-research-type");
 		researchTypeTextEl = researchTypeBoxEl.querySelector("p.info");
 		companiesBoxEl = document.getElementById("box-companies");
@@ -41,7 +41,7 @@ function UserInfoBar(hackBrowserWindow) {
 			var userInfo = JSON.parse(userInfoJSON);
 			var researchTypeText = ((userInfo.researchTypeKey === "other") ? userInfo.researchTypeOtherReason : userInfo.researchType);
 
-			updateUserNumber(userInfo.userNumber);
+			updateUserName(userInfo.userName);
 			updateResearchType(researchTypeText);
 			updateCompanies(userInfo.researchCompanies);
 		});
@@ -60,8 +60,8 @@ function UserInfoBar(hackBrowserWindow) {
 	 public methods
 	 ====================================== */
 
-	var updateUserNumber = function(val) {
-		userNumberTextEl.textContent = val;
+	var updateUserName = function(val) {
+		userNameTextEl.textContent = val;
 	};
 
 	var updateResearchType = function(val) {

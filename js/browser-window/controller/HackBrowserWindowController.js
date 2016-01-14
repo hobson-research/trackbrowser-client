@@ -9,6 +9,7 @@
 function HackBrowserWindowController() {
 	const remote = require("electron").remote;
 	const fs = require("fs");
+	const path = require("path");
 
 	var _this = this;
 
@@ -29,6 +30,8 @@ function HackBrowserWindowController() {
 	var tabList;
 
 	var isTrackingOn;
+	var userName;
+	var dataPath;
 
 
 	/* ====================================
@@ -50,6 +53,22 @@ function HackBrowserWindowController() {
 		tabList = {};
 
 		isTrackingOn = true;
+
+		ipcHandler.requestUserInfo(function(userInfoObj) {
+			userInfoObj = JSON.parse(userInfoObj);
+			userName = userInfoObj.userName;
+
+			console.log("requestUserInfo response received in HackBrowserWindowController.init()");
+			console.log(userName);
+		});
+
+		// retrieve data path from main process
+		dataPath = null;
+
+		// retrieve data path (for screenshots from main process)
+		ipcHandler.requestDataPath(function(dataPathResponse) {
+			dataPath = dataPathResponse;
+		});
 
 		_this.addNewTab("http://www.google.com/", true);
 
@@ -294,14 +313,23 @@ function HackBrowserWindowController() {
 	 * @param {function} callback after taking the screenshot is complete
 	 */
 	_this.captureActiveWebView = function(callback) {
+		console.log("captureActiveWebView()");
+
 		var captureDate = new Date();
 
-		var filePath = "session_data" + path.sep + "screenshots" + path.sep + "capture_" + captureDate.getFullYear() + pad((captureDate.getMonth() + 1), 2) + pad(captureDate.getDate(), 2) + "_" + pad(captureDate.getHours(), 2) + pad(captureDate.getMinutes(), 2) + pad(captureDate.getSeconds(), 2) + ".png";
+		var fileName = "capture_" + userName + "_" + captureDate.getFullYear() + Utility.pad((captureDate.getMonth() + 1), 2) + Utility.pad(captureDate.getDate(), 2) + "_" + Utility.pad(captureDate.getHours(), 2) + Utility.pad(captureDate.getMinutes(), 2) + Utility.pad(captureDate.getSeconds(), 2) + ".png";
+
+		var filePath = dataPath + fileName;
+
+		console.log(fileName);
+		console.log(filePath);
+
 		remote.getCurrentWindow().capturePage(function(img) {
 			(function() {
 				fs.writeFile(filePath, img.toPng(), function(err) {
 					if (err) {
 						console.log("[HackBrowserWindowController] Error generating screenshot file");
+						console.log(err);
 					};
 
 					callback(filePath);

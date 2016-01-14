@@ -41,8 +41,17 @@ function IPCRendererProcessHandler(hackBrowserWindow) {
 		console.log("IPCRendererProcessHandler.requestUserInfo()");
 
 		ipcRenderer.send("userInfoRequest", true);
-		ipcRenderer.on("userInfoResponse", function(e, userInfo) {
-			callback(userInfo);
+		ipcRenderer.on("userInfoResponse", function(e, userInfoObj) {
+			callback(userInfoObj);
+		});
+	};
+
+	_this.requestDataPath = function(callback) {
+		console.log("IPCRendererProcessHandler.requestDataPath");
+
+		ipcRenderer.send("dataPathRequest", true);
+		ipcRenderer.on("dataPathResponse", function(e, dataPath) {
+			callback(dataPath);
 		});
 	};
 
@@ -60,7 +69,7 @@ function IPCRendererProcessHandler(hackBrowserWindow) {
 
 	_this.sendScreenshotData = function(tabViewId, url, fileName, callback) {
 
-	}
+	};
 
 	init();
 }

@@ -113,9 +113,7 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 		if (e.isMainFrame) {
 			webViewURL = webViewEl.getURL();
 
-			return;
-
-			if (hackBrowserWindow.getTrackingModeOnOff() === true) {
+			if (hackBrowserWindow.getTrackingOnOff() === true) {
 				if (hackBrowserWindow.getActiveTabView() === _this) {
 					hackBrowserWindow.captureActiveWebView(function(imgPath) {
 
