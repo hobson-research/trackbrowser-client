@@ -13,30 +13,34 @@
 			const ipcRenderer = require("electron").ipcRenderer;
 
 			var researchTopicFormEl;
+			var isNewSession = true;
 
 			var researchType;
 			var researchTypeKey;
 			var researchTypeOtherReasonInputEl;
 			var researchCompaniesInputEl;
+			var submitBtnEl;
 			var cancelBtnEl;
 
 			var init = function() {
-				attachEventHandlers();
+				document.addEventListener("DOMContentLoaded", handleDOMContentLoaded);
 			};
 
 			var attachEventHandlers = function() {
-				document.addEventListener("DOMContentLoaded", handleDOMContentLoaded);
+				researchTopicFormEl.addEventListener("submit", handleResearchTopicFormSubmit);
+				cancelBtnEl.addEventListener("click", handleCancelBtnClick);
 			};
 
 			var handleDOMContentLoaded = function() {
 				researchTopicFormEl = document.getElementById("research-topic-form");
 				researchTypeOtherReasonInputEl = document.getElementById("input-reason-others");
 				researchCompaniesInputEl = document.getElementById("input-research-company");
+				submitBtnEl = document.getElementById("submit");
 				cancelBtnEl = document.getElementById("cancel");
 
 				ipcRenderer.send("userInfoRequest", true);
 
-				ipcRenderer.on("userInfoResponse", function(e, researchTopicJSON) {
+				ipcRenderer.once("userInfoResponse", function(e, researchTopicJSON) {
 					var researchTopicObj = JSON.parse(researchTopicJSON);
 
 					console.log("researchTopicJSON: ");
@@ -44,11 +48,13 @@
 
 					// the form already has been initialized
 					if (researchTopicObj.researchType !== null) {
+						isNewSession = false;
+						submitBtnEl.value = "Save";
 						cancelBtnEl.value = "Cancel";
 					}
 				});
 
-				researchTopicFormEl.addEventListener("submit", handleResearchTopicFormSubmit);
+				attachEventHandlers();
 			};
 
 			var handleResearchTopicFormSubmit = function(e) {
@@ -59,23 +65,35 @@
 				researchType = researchType.value;
 
 				var msgObject = {
-					researchType: researchType,
-					researchTypeKey: researchTypeKey,
-					researchTypeOtherReason: researchTypeOtherReasonInputEl.value,
-					researchCompanies: researchCompaniesInputEl.value
+					isNewSession: isNewSession,
+					researchTopicData: {
+						researchType: researchType,
+						researchTypeKey: researchTypeKey,
+						researchTypeOtherReason: researchTypeOtherReasonInputEl.value,
+						researchCompanies: researchCompaniesInputEl.value
+					}
 				};
 
 				console.log(msgObject);
 
 				ipcRenderer.send("researchTopicInput", JSON.stringify(msgObject));
-
-				ipcRenderer.on("researchTopicInputResult", function(e, arg) {
+				ipcRenderer.once("researchTopicInputResult", function(e, arg) {
 					console.log(e);
 					console.log(arg);
 				});
 
 				e.preventDefault();
 
+			};
+
+			var handleCancelBtnClick = function(e) {
+				ipcRenderer.send("researchTopicWindowCancelRequest", isNewSession);
+				ipcRenderer.once("researchTopicWindowCancelResponse", function(e, arg) {
+					console.log(e);
+					console.log(arg);
+				});
+
+				e.preventDefault();
 			};
 
 			init();
@@ -90,27 +108,27 @@
 				<p class="question"><span class="number">1</span>What research are you doing right now? Research to...</p>
 
 				<div class="item-radio">
-					<input type="radio" name="radioResearchType" id="type-new-company" value="buy a new company" data-keyword="buy" checked="checked">
+					<input type="radio" name="radio-research-type" id="type-new-company" value="buy a new company" data-keyword="buy" checked>
 					<label for="type-new-company">buy a new company</label>
 				</div><!-- // .item-radio -->
 
 				<div class="item-radio">
-					<input type="radio" name="radioResearchType" id="type-increase-position" value="increase a currently held position" data-keyword="increase">
+					<input type="radio" name="radio-research-type" id="type-increase-position" value="increase a currently held position" data-keyword="increase">
 					<label for="type-increase-position">increase a currently held position</label>
 				</div><!-- // .item-radio -->
 
 				<div class="item-radio">
-					<input type="radio" name="radioResearchType" id="type-decrease-position" value="decrease a currently held position" data-keyword="decrease">
+					<input type="radio" name="radio-research-type" id="type-decrease-position" value="decrease a currently held position" data-keyword="decrease">
 					<label for="type-decrease-position">decrease a currently held position</label>
 				</div><!-- // .item-radio -->
 
 				<div class="item-radio">
-					<input type="radio" name="radioResearchType" id="type-evaluate-position" value="evaluate a current position" data-keyword="evaluate">
+					<input type="radio" name="radio-research-type" id="type-evaluate-position" value="evaluate a current position" data-keyword="evaluate">
 					<label for="type-evaluate-position">evaluate a current position</label>
 				</div><!-- // .item-radio -->
 
 				<div class="item-radio">
-					<input type="radio" name="radioResearchType" id="type-others" value="Other, please explain below: " data-keyword="other">
+					<input type="radio" name="radio-research-type" id="type-others" value="Other, please explain below: " data-keyword="other">
 					<label for="type-others">Other, please explain below: </label>
 				</div><!-- // .item-radio -->
 
@@ -120,7 +138,7 @@
 			<div class="item last">
 				<p class="question"><span class="number">2</span>What company(ies) are you researching?</p>
 
-				<input type="text" id="input-research-company" placeholder="Google, Facebook" />
+				<input type="text" id="input-research-company" required placeholder="Google, Facebook" />
 			</div><!-- // .item -->
 		</div><!-- // #research-topic-inputs-wrapper -->
 

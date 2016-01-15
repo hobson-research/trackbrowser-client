@@ -23,6 +23,16 @@ function ActivityRecorder(mainProcessController) {
 			.on('response', successCallback);
 	};
 
+	_this.recordUserInfo = function(userInfoObj) {
+		// add userName to userInfoObj
+		userInfoObj.userName = userName;
+
+		request.post({
+			url: tbServerHost + ":" + tbServerPort + "/api/v1/researchtopic",
+			formData: userInfoObj
+		});
+	};
+
 	_this.recordNavigation = function(tabViewId, url) {
 		var recordDate = new Date();
 

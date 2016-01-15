@@ -1,12 +1,12 @@
 'use strict';
 
-const ipcMain = require("electron").ipcMain;
-
 /**
  * since there can only be one main process at any point,
  * all methods must be static
  */
 function IPCMainProcessHandler(mainProcessController) {
+	const ipcMain = require("electron").ipcMain;
+
 	var _this = this;
 
 	var mainProcessEventEmitter;
@@ -21,13 +21,20 @@ function IPCMainProcessHandler(mainProcessController) {
 	};
 
 	var attachEventHandlers = function() {
+		ipcMain.on("userNameRequest", handleUserNameRequest);
 		ipcMain.on("userNameCheck", handleUserNameCheck);
 		ipcMain.on("dataPathRequest", handleDataPathRequest);
 		ipcMain.on("researchTopicWindowOpenRequest", handleResearchTopicWindowOpenRequest);
+		ipcMain.on("researchTopicWindowCancelRequest", handleResearchTopicWindowCancelRequest);
 		ipcMain.on("researchTopicInput", handleResearchTopicInput);
 		ipcMain.on("userInfoRequest", handleUserInfoRequest);
 		ipcMain.on("navigationData", handleNavigationData);
+		ipcMain.on("screenshotUploadRequest", handleScreenshotUploadRequest);
 		ipcMain.on("helpWindowOpenRequest", handleHelpWindowOpenRequest);
+	};
+
+	var handleUserNameRequest = function(event, arg) {
+		event.sender.send("userNameResponse", mainProcessController.getParticipantUserName());
 	};
 
 	var handleUserNameCheck = function(event, arg) {
@@ -52,6 +59,16 @@ function IPCMainProcessHandler(mainProcessController) {
 		mainProcessController.getWindowManager().openResearchTopicWindow();
 
 		event.sender.send("researchTopicWindowOpenResponse", true);
+	};
+
+	var handleResearchTopicWindowCancelRequest = function(event, isNewSession) {
+		if (isNewSession === true) {
+			mainProcessController.getWindowManager().openLoginWindow(function() {
+				mainProcessController.getWindowManager().closeResearchTopicWindow();
+			});
+		} else {
+			mainProcessController.getWindowManager().closeResearchTopicWindow();
+		}
 	};
 
 	var handleHelpWindowOpenRequest = function(event, arg) {
@@ -85,6 +102,14 @@ function IPCMainProcessHandler(mainProcessController) {
 		var navigationDataObj = JSON.parse(arg);
 
 		mainProcessController.getActivityRecorder().recordNavigation(navigationDataObj.tabViewId, navigationDataObj.url);
+	};
+
+	var handleScreenshotUploadRequest = function(event, screenshotDataJSON) {
+		var recordDate = new Date();
+
+		var screenshotDataObj = JSON.parse(screenshotDataJSON);
+
+		mainProcessController.getActivityRecorder().uploadScreenshot(screenshotDataObj.tabViewId, screenshotDataObj.filePath);
 	};
 
 	init();

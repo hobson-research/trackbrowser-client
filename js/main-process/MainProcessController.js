@@ -32,6 +32,8 @@ function MainProcessController() {
 
 	var attachEventHandlers = function() {
 		app.on("window-all-closed", function() {
+			console.log("window-all-closed, quitting");
+
 			if (process.platform != "darwin") {
 				console.log("quitting app");
 
@@ -71,9 +73,11 @@ function MainProcessController() {
 		mainProcessEventEmitter = new EventEmitter();
 
 		// TODO: remove this line
-		if (_this.getParticipantUserName() === null) {
-			_this.setParticipantDataItem("userName", "test");
-		}
+		/*
+		 if (_this.getParticipantUserName() === null) {
+		 _this.setParticipantDataItem("userName", "test");
+		 }
+		 */
 
 		windowManager = new HackBrowserWindowManager(_this);
 		recorder = new ActivityRecorder(_this);
@@ -87,10 +91,10 @@ function MainProcessController() {
 			},
 			function(response) {
 				if (response.statusCode === 200) {
-					// windowManager.openLoginWindow();
+					windowManager.openLoginWindow();
 
 					// for debugging
-					windowManager.openNewBrowserWindow();
+					// windowManager.openNewBrowserWindow();
 				}
 			}
 		);

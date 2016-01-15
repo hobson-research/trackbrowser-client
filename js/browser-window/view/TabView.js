@@ -143,7 +143,7 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 		if (hackBrowserWindow.getTrackingOnOff() === true) {
 			if (hackBrowserWindow.getActiveTabView() === _this) {
 				hackBrowserWindow.captureActiveWebView(function(imgPath) {
-
+					hackBrowserWindow.getIPCHandler().requestScreenshotUpload(tabViewId, webViewURL, imgPath, function() {});
 				});
 			}
 

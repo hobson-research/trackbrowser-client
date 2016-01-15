@@ -41,7 +41,7 @@ function IPCRendererProcessHandler(hackBrowserWindow) {
 		console.log("IPCRendererProcessHandler.requestUserInfo()");
 
 		ipcRenderer.send("userInfoRequest", true);
-		ipcRenderer.on("userInfoResponse", function(e, userInfoObj) {
+		ipcRenderer.once("userInfoResponse", function(e, userInfoObj) {
 			callback(userInfoObj);
 		});
 	};
@@ -50,7 +50,7 @@ function IPCRendererProcessHandler(hackBrowserWindow) {
 		console.log("IPCRendererProcessHandler.requestDataPath");
 
 		ipcRenderer.send("dataPathRequest", true);
-		ipcRenderer.on("dataPathResponse", function(e, dataPath) {
+		ipcRenderer.once("dataPathResponse", function(e, dataPath) {
 			callback(dataPath);
 		});
 	};
@@ -61,7 +61,7 @@ function IPCRendererProcessHandler(hackBrowserWindow) {
 		callback = callback || function() {};
 
 		ipcRenderer.send("researchTopicWindowOpenRequest", true);
-		ipcRenderer.on("researchTopicWindowOpenResponse", function(e, result) {
+		ipcRenderer.once("researchTopicWindowOpenResponse", function(e, result) {
 			callback(result);
 		});
 	};
@@ -72,7 +72,7 @@ function IPCRendererProcessHandler(hackBrowserWindow) {
 		callback = callback || function() {};
 
 		ipcRenderer.send("helpWindowOpenRequest", true);
-		ipcRenderer.on("helpWindowOpenResponse", function(e, result) {
+		ipcRenderer.once("helpWindowOpenResponse", function(e, result) {
 			callback(result);
 		});
 	};
@@ -84,13 +84,24 @@ function IPCRendererProcessHandler(hackBrowserWindow) {
 		};
 
 		ipcRenderer.send("navigationData", JSON.stringify(sendMsgObj));
-		ipcRenderer.on("navigationDataRecorded", function(e, result) {
+		ipcRenderer.once("navigationDataRecorded", function(e, result) {
 			callback(result);
 		});
 	};
 
-	_this.sendScreenshotData = function(tabViewId, url, fileName, callback) {
+	_this.requestScreenshotUpload = function(tabViewId, url, filePath, callback) {
+		callback = callback || function() {};
 
+		var screenshotDataObj = {
+			tabViewId: tabViewId,
+			url: url,
+			filePath: filePath
+		};
+
+		ipcRenderer.send("screenshotUploadRequest", JSON.stringify(screenshotDataObj));
+		ipcRenderer.once("screenshotUploadResponse", function(e, result) {
+			callback(result);
+		});
 	};
 
 	init();

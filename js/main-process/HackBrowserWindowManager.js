@@ -19,12 +19,19 @@ function HackBrowserWindowManager(mainProcessController) {
 
 	var loginWindow;
 	var researchTopicWindow;
+	var browserWindow;
+	var helpWindow;
 
 
 	/* ====================================
 	 private methods
 	 ====================================== */
 	var init = function() {
+		loginWindow = null;
+		researchTopicWindow = null;
+		browserWindow = null;
+		helpWindow = null;
+
 		mainProcessEventEmitter = mainProcessController.getMainProcessEventEmitter();
 
 		mainProcessEventEmitter.on("userNameCheckPass", function(userName) {
@@ -36,13 +43,14 @@ function HackBrowserWindowManager(mainProcessController) {
 			mainProcessController.getActivityRecorder().setParticipantUserName(userName);
 
 			_this.openResearchTopicWindow();
-
-			// close login window
-			loginWindow.close();
+			_this.closeLoginWindow();
 		});
 
-		mainProcessEventEmitter.on("researchTopicInputComplete", function(researchTopicData) {
+		mainProcessEventEmitter.on("researchTopicInputComplete", function(msgObject) {
 			console.log("researchTopicInputComplete");
+
+			var isNewSession = msgObject.isNewSession;
+			var researchTopicData = msgObject.researchTopicData;
 
 			for (var key in researchTopicData) {
 				if (researchTopicData.hasOwnProperty(key)) {
@@ -50,10 +58,15 @@ function HackBrowserWindowManager(mainProcessController) {
 				}
 			}
 
-			_this.openNewBrowserWindow(function() {
-				// close research input window
-				researchTopicWindow.close();
-			});
+			mainProcessController.getActivityRecorder().recordUserInfo(researchTopicData);
+
+			if (isNewSession === true) {
+				_this.openNewBrowserWindow(function() {
+					_this.closeResearchTopicWindow();
+				});
+			} else {
+				_this.closeResearchTopicWindow();
+			}
 		});
 	};
 
@@ -61,7 +74,7 @@ function HackBrowserWindowManager(mainProcessController) {
 		var windowId = browserWindow.id;
 
 		// save browser window's width/height when user closes it
-		browserWindow.on('close', function() {
+		browserWindow.on('close', function(e) {
 			var size = browserWindow.getSize();
 
 			var sizeObject = {
@@ -71,6 +84,8 @@ function HackBrowserWindowManager(mainProcessController) {
 
 			// save to persistent storage
 			PersistentStorage.setItem("browserWindowSize", sizeObject);
+
+			e.returnValue = false;
 		});
 
 		// remove the window from browserWindowList and remove reference so that GC clear is from memory
@@ -90,6 +105,12 @@ function HackBrowserWindowManager(mainProcessController) {
 	_this.openLoginWindow = function(callback) {
 		callback = callback || function() {};
 
+		// if research topic input window is already open,
+		// do nothing
+		if (loginWindow !== null) {
+			return;
+		}
+
 		// Create the login window
 		loginWindow = new BrowserWindow({
 			width:600,
@@ -105,14 +126,34 @@ function HackBrowserWindowManager(mainProcessController) {
 		callback();
 	};
 
+	_this.closeLoginWindow = function(callback) {
+		callback = callback || function() {};
+
+		// close login window
+		loginWindow.close();
+		loginWindow = null;
+
+		callback();
+	};
+
 	_this.openPictureDisplayWindow = function(callback) {
 		callback = callback || function() {};
 
 		callback();
 	};
 
+	_this.closePictureDisplayWindow = function(callback) {
+		callback = callback || function() {};
+	};
+
 	_this.openResearchTopicWindow = function(callback) {
 		callback = callback || function() {};
+
+		// if research topic input window is already open,
+		// do nothing
+		if (researchTopicWindow !== null) {
+			return;
+		}
 
 		researchTopicWindow = new BrowserWindow({
 			width: 600,
@@ -124,6 +165,15 @@ function HackBrowserWindowManager(mainProcessController) {
 		researchTopicWindow.loadURL("file://" + __app.basePath + "/html-pages/research-topic.html");
 
 		researchTopicWindow.openDevTools();
+
+		callback();
+	};
+
+	_this.closeResearchTopicWindow = function(callback) {
+		callback = callback || function() {};
+
+		researchTopicWindow.close();
+		researchTopicWindow = null;
 
 		callback();
 	};
@@ -141,20 +191,20 @@ function HackBrowserWindowManager(mainProcessController) {
 			}
 
 			// create the browser window
-			var newWindow = new BrowserWindow({
+			browserWindow = new BrowserWindow({
 				width: browserSize.width,
 				height: browserSize.height,
 				frame: true
 			});
 
 			// load the HTML file for browser window
-			newWindow.loadURL("file://" + __app.basePath + "/html-pages/browser-window.html");
+			browserWindow.loadURL("file://" + __app.basePath + "/html-pages/browser-window.html");
 
 			// Open the DevTools (debugging)
-			newWindow.openDevTools();
+			browserWindow.openDevTools();
 
-			browserWindowList[newWindow.id] = newWindow;
-			attachEventHandlers(newWindow);
+			browserWindowList[browserWindow.id] = browserWindow;
+			attachEventHandlers(browserWindow);
 
 			// increase window count
 			createdWindowCount++;
@@ -166,18 +216,30 @@ function HackBrowserWindowManager(mainProcessController) {
 	_this.openHelpWindow = function(callback) {
 		callback = callback || function() {};
 
-		researchTopicWindow = new BrowserWindow({
+		helpWindow = new BrowserWindow({
 			width: 700,
 			height: 600,
 			resizable: false,
 			frame: false
 		});
 
-		researchTopicWindow.loadURL("file://" + __app.basePath + "/html-pages/help.html");
+		helpWindow.loadURL("file://" + __app.basePath + "/html-pages/help.html");
 
-		researchTopicWindow.openDevTools();
+		// helpWindow.openDevTools();
 
 		callback();
+	};
+
+	_this.closeHelpWindow = function(callback) {
+		callback = callback || function() {};
+	};
+
+	_this.getLoginWindow = function() {
+		return loginWindow;
+	};
+
+	_this.getResearchTopicWinodw = function() {
+		return researchTopicWindow;
 	};
 
 	init();

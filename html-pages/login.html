@@ -7,31 +7,40 @@
 	<link rel="stylesheet" href="css/login.css">
 
 	<script>
-		'use strict';
+		(function() {
+			'use strict';
 
-		const ipcRenderer = require("electron").ipcRenderer;
+			const ipcRenderer = require("electron").ipcRenderer;
 
-		var loginFormEl;
-		var userNameInputEl;
-		var userNameVal;
+			var loginFormEl;
+			var userNameInputEl;
 
-		document.addEventListener("DOMContentLoaded", function() {
-			loginFormEl = document.getElementById("login-form");
-			userNameInputEl = document.getElementById("input-user-name");
+			document.addEventListener("DOMContentLoaded", function() {
+				loginFormEl = document.getElementById("login-form");
+				userNameInputEl = document.getElementById("input-user-name");
 
-			loginFormEl.addEventListener("submit", function(e) {
-				var userNameValue = userNameInputEl.value;
+				ipcRenderer.send("userNameRequest", true);
+				ipcRenderer.once("userNameResponse", function(e, userName) {
+					console.log("userNameRespone: " + userName);
+					if (userName !== null) {
+						userNameInputEl.value = userName;
+					}
 
-				ipcRenderer.send("userNameCheck", userNameValue);
+					loginFormEl.addEventListener("submit", function(e) {
+						var userNameValue = userNameInputEl.value;
 
-				ipcRenderer.on("userNameCheckResult", function(e, arg) {
-					console.log(e);
-					console.log(arg);
+						ipcRenderer.send("userNameCheck", userNameValue);
+
+						ipcRenderer.once("userNameCheckResult", function(e, arg) {
+							console.log(e);
+							console.log(arg);
+						});
+
+						e.preventDefault();
+					});
 				});
-
-				e.preventDefault();
 			});
-		});
+		})();
 	</script>
 </head>
 <body id="body-login">
@@ -40,7 +49,7 @@
 		<div id="login-input-wrapper">
 			<p class="desc">Your browsing data will be tracked for research purposes. Please enter your user number to continue. </p>
 
-			<input type="text" id="input-user-name" placeholder="Username" />
+			<input type="text" id="input-user-name" required pattern="[a-zA-Z0-9]+" placeholder="Username" />
 		</div><!-- // #login-input-wrapper -->
 
 		<input type="submit" id="submit" value="Continue" />
