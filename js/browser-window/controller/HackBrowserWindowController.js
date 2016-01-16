@@ -29,7 +29,7 @@ function HackBrowserWindowController() {
 	var openTabViewCount;
 	var tabList;
 
-	var isTrackingOn;
+	var trackingStatus;
 	var userName;
 	var dataPath;
 
@@ -52,7 +52,7 @@ function HackBrowserWindowController() {
 		openTabViewCount = 0;
 		tabList = {};
 
-		isTrackingOn = true;
+		trackingStatus = true;
 
 		ipcHandler.requestUserInfo(function(userInfoObj) {
 			userInfoObj = JSON.parse(userInfoObj);
@@ -325,9 +325,6 @@ function HackBrowserWindowController() {
 
 		var filePath = dataPath + fileName;
 
-		console.log(fileName);
-		console.log(filePath);
-
 		remote.getCurrentWindow().capturePage(function(img) {
 			(function() {
 				fs.writeFile(filePath, img.toPng(), function(err) {
@@ -342,13 +339,13 @@ function HackBrowserWindowController() {
 		});
 	};
 
-	_this.getTrackingOnOff = function() {
-		return isTrackingOn;
+	_this.isTrackingOn = function() {
+		return trackingStatus;
 	};
 
 	_this.setTrackingOnOff = function(isOn) {
-		isTrackingOn = isOn;
-	}
+		trackingStatus = isOn;
+	};
 
 	init();
 }

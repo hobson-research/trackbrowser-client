@@ -21,6 +21,7 @@ function UserInfoBar(hackBrowserWindow) {
 	var companiesTextEl;
 	var helpBoxEl;
 	var trackingStatusBoxEl;
+	var trackingStatusTextEl;
 	var trackingStatusSwitchWrapperEl;
 
 
@@ -37,6 +38,7 @@ function UserInfoBar(hackBrowserWindow) {
 		companiesTextEl = companiesBoxEl.querySelector("p.info");
 		helpBoxEl = document.getElementById("box-link-help");
 		trackingStatusBoxEl = document.getElementById("box-tracking-status");
+		trackingStatusTextEl = trackingStatusBoxEl.querySelector("p.info");
 		trackingStatusSwitchWrapperEl = document.getElementById("tracking-switch-wrapper");
 		_this.syncUserInfoFromMainProcess();
 
@@ -51,7 +53,7 @@ function UserInfoBar(hackBrowserWindow) {
 		companiesBoxEl.addEventListener("click", handleCompaniesBoxClick);
 		trackingStatusBoxEl.addEventListener("click", handleTrackingStatusBoxClick);
 		helpBoxEl.addEventListener("click", handleHelpBoxClick);
-	}
+	};
 
 	var handleResearchTypeBoxClick = function(e) {
 		hackBrowserWindow.getIPCHandler().requestResearchTopicWindowOpen();
@@ -78,7 +80,15 @@ function UserInfoBar(hackBrowserWindow) {
 	};
 
 	var toggleTrackingMode = function() {
-
+		if (hackBrowserWindow.isTrackingOn() === true) {
+			hackBrowserWindow.setTrackingOnOff(false);
+			_this.setTrackingMode(false);
+			trackingStatusTextEl.textContent = "Off";
+		} else {
+			hackBrowserWindow.setTrackingOnOff(true);
+			_this.setTrackingMode(true);
+			trackingStatusTextEl.textContent = "On";
+		}
 	};
 
 	/* ====================================

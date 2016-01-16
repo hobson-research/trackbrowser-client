@@ -210,7 +210,7 @@ input#address-bar {
 	position: absolute;
 	bottom: 0;
 	left: 0;
-	webkit-box-sizing: border-box;
+	box-sizing: border-box;
 	font-size: 13px;
 	line-height: 13px;
 	overflow: visible;
@@ -343,7 +343,7 @@ input#address-bar {
 	right: 20px;
 	width: 32px;
 	height: 16px;
-	border: 2px solid #fff;
+	border: 2px solid #777;
 	border-radius: 18px;
 }
 
@@ -359,10 +359,11 @@ input#address-bar {
 		height: 12px;
 		background: #777;
 		border-radius: 12px;
+		transition: left 90ms linear;
 	}
 
 	#tracking-switch-wrapper.on #tracking-switch {
-		right: 2px;
+		left: 18px;
 		background-color: #fff;
 	}
 

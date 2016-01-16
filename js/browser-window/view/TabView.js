@@ -140,7 +140,7 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 		});
 
 		// take screenshot and notify main process via ipc
-		if (hackBrowserWindow.getTrackingOnOff() === true) {
+		if (hackBrowserWindow.isTrackingOn() === true) {
 			if (hackBrowserWindow.getActiveTabView() === _this) {
 				hackBrowserWindow.captureActiveWebView(function(imgPath) {
 					hackBrowserWindow.getIPCHandler().requestScreenshotUpload(tabViewId, webViewURL, imgPath, function() {});
