@@ -121,7 +121,9 @@ function HackBrowserWindowManager(mainProcessController) {
 
 		loginWindow.loadURL("file://" + __app.basePath + "/html-pages/login.html");
 
-		// loginWindow.openDevTools();
+		loginWindow.on('closed', function() {
+			loginWindow = null;
+		});
 
 		callback();
 	};
@@ -131,7 +133,6 @@ function HackBrowserWindowManager(mainProcessController) {
 
 		// close login window
 		loginWindow.close();
-		loginWindow = null;
 
 		callback();
 	};
@@ -166,6 +167,10 @@ function HackBrowserWindowManager(mainProcessController) {
 
 		researchTopicWindow.openDevTools();
 
+		researchTopicWindow.on('closed', function() {
+			researchTopicWindow = null;
+		});
+
 		callback();
 	};
 
@@ -173,7 +178,6 @@ function HackBrowserWindowManager(mainProcessController) {
 		callback = callback || function() {};
 
 		researchTopicWindow.close();
-		researchTopicWindow = null;
 
 		callback();
 	};
@@ -226,6 +230,10 @@ function HackBrowserWindowManager(mainProcessController) {
 		helpWindow.loadURL("file://" + __app.basePath + "/html-pages/help.html");
 
 		// helpWindow.openDevTools();
+
+		helpWindow.on('closed', function() {
+			helpWindow = null;
+		});
 
 		callback();
 	};

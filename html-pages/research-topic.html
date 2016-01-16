@@ -15,8 +15,7 @@
 			var researchTopicFormEl;
 			var isNewSession = true;
 
-			var researchType;
-			var researchTypeKey;
+			var researchTypeOtherRadioBtnEl;
 			var researchTypeOtherReasonInputEl;
 			var researchCompaniesInputEl;
 			var submitBtnEl;
@@ -28,46 +27,57 @@
 
 			var attachEventHandlers = function() {
 				researchTopicFormEl.addEventListener("submit", handleResearchTopicFormSubmit);
+				researchTypeOtherRadioBtnEl.addEventListener("click", handleOtherReasonRadioBtnClick);
+				researchTypeOtherReasonInputEl.addEventListener("click", handleOtherReasonInputClick);
 				cancelBtnEl.addEventListener("click", handleCancelBtnClick);
 			};
 
 			var handleDOMContentLoaded = function() {
 				researchTopicFormEl = document.getElementById("research-topic-form");
 				researchTypeOtherReasonInputEl = document.getElementById("input-reason-others");
+				researchTypeOtherRadioBtnEl = researchTopicFormEl.querySelector("input[data-keyword='other']");
 				researchCompaniesInputEl = document.getElementById("input-research-company");
 				submitBtnEl = document.getElementById("submit");
 				cancelBtnEl = document.getElementById("cancel");
-
 				ipcRenderer.send("userInfoRequest", true);
-
-				ipcRenderer.once("userInfoResponse", function(e, researchTopicJSON) {
-					var researchTopicObj = JSON.parse(researchTopicJSON);
-
-					console.log("researchTopicJSON: ");
-					console.log(researchTopicObj);
-
-					// the form already has been initialized
-					if (researchTopicObj.researchType !== null) {
-						isNewSession = false;
-						submitBtnEl.value = "Save";
-						cancelBtnEl.value = "Cancel";
-					}
-				});
+				ipcRenderer.once("userInfoResponse", handleUserInfoResponse);
 
 				attachEventHandlers();
+			};
+
+			var handleUserInfoResponse = function(e, researchTopicJSON) {
+				var researchTopicObj = JSON.parse(researchTopicJSON);
+
+				console.log("researchTopicJSON: ");
+				console.log(researchTopicObj);
+
+				// the form already has been initialized
+				if (researchTopicObj.researchType !== null) {
+					isNewSession = false;
+					submitBtnEl.value = "Save";
+					cancelBtnEl.value = "Cancel";
+
+					// fill in research type
+					researchTopicFormEl.querySelector("input[data-keyword='" + researchTopicObj.researchTypeKey + "']").checked = true;
+					// if research type is "other", fill in reason text box
+					if (researchTopicObj.researchTypeKey === "other") {
+						researchTypeOtherReasonInputEl.value = researchTopicObj.researchTypeOtherReason;
+					}
+
+					researchCompaniesInputEl.value = researchTopicObj.researchCompanies;
+				}
 			};
 
 			var handleResearchTopicFormSubmit = function(e) {
 				console.log("form submit");
 
-				researchType = document.querySelector("input[type=radio]:checked");
-				researchTypeKey = researchType.dataset.keyword;
-				researchType = researchType.value;
+				var researchTypeEl = document.querySelector("input[type=radio]:checked");
+				var researchTypeKey = researchTypeEl.dataset.keyword;
 
 				var msgObject = {
 					isNewSession: isNewSession,
 					researchTopicData: {
-						researchType: researchType,
+						researchType: researchTypeEl.value,
 						researchTypeKey: researchTypeKey,
 						researchTypeOtherReason: researchTypeOtherReasonInputEl.value,
 						researchCompanies: researchCompaniesInputEl.value
@@ -94,6 +104,14 @@
 				});
 
 				e.preventDefault();
+			};
+
+			var handleOtherReasonRadioBtnClick = function(e) {
+				researchTypeOtherReasonInputEl.focus();
+			};
+
+			var handleOtherReasonInputClick = function(e) {
+				researchTopicFormEl.querySelector("input[data-keyword='other']").checked = true;
 			};
 
 			init();

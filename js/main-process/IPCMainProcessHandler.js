@@ -40,8 +40,6 @@ function IPCMainProcessHandler(mainProcessController) {
 	var handleUserNameCheck = function(event, arg) {
 		var userName = arg;
 
-		console.log("userNameCheck message received");
-
 		// TODO: check username check logic
 		if (true) {
 			event.sender.send("userNameCheckResult", true);
@@ -79,8 +77,6 @@ function IPCMainProcessHandler(mainProcessController) {
 
 	var handleResearchTopicInput = function(event, arg) {
 		var msgObj;
-
-		console.log("researchTopicInput received");
 
 		try {
 			msgObj = JSON.parse(arg);
