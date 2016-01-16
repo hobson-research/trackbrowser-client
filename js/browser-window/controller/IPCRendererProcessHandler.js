@@ -30,9 +30,13 @@ function IPCRendererProcessHandler(hackBrowserWindow) {
 	 * attach event handlers for menu bar buttons
 	 */
 	var attachEventHandlers = function() {
-
+		ipcRenderer.on("researchTopicUpdated", handleResearchTopicUpdated);
 	};
 
+	var handleResearchTopicUpdated = function(event, arg) {
+		console.log("IPCRendererProcessHandler.handleResearchTopicUpdated()");
+		hackBrowserWindow.getUserInfoBar().syncUserInfoFromMainProcess();
+	};
 
 	/* ====================================
 	 public methods

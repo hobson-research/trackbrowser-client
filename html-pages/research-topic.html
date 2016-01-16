@@ -87,7 +87,7 @@
 				console.log(msgObject);
 
 				ipcRenderer.send("researchTopicInput", JSON.stringify(msgObject));
-				ipcRenderer.once("researchTopicInputResult", function(e, arg) {
+				ipcRenderer.once("researchTopicUpdated", function(e, arg) {
 					console.log(e);
 					console.log(arg);
 				});

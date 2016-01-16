@@ -81,12 +81,14 @@ function IPCMainProcessHandler(mainProcessController) {
 		try {
 			msgObj = JSON.parse(arg);
 
-			event.sender.send("researchTopicInputResult", true);
+			event.sender.send("researchTopicUpdated", true);
 			mainProcessEventEmitter.emit("researchTopicInputComplete", msgObj);
+
+			mainProcessController.getWindowManager().getBrowserWindow().webContents.executeJavaScript("hackBrowserWindow.getUserInfoBar().syncUserInfoFromMainProcess()");
 		} catch (err) {
 			console.log("Error parsing research topic input IPC message (invalid JSON format)");
 
-			event.sender.send("researchTopicInputResult", false);
+			event.sender.send("researchTopicUpdated", false);
 		}
 	};
 

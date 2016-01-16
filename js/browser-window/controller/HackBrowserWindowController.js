@@ -307,6 +307,10 @@ function HackBrowserWindowController() {
 		return ipcHandler;
 	};
 
+	_this.getUserInfoBar = function() {
+		return userInfoBar;
+	};
+
 	/**
 	 * take screenshot of active <webview> element
 	 *

@@ -242,6 +242,10 @@ function HackBrowserWindowManager(mainProcessController) {
 		callback = callback || function() {};
 	};
 
+	_this.getBrowserWindow = function() {
+		return browserWindow;
+	};
+
 	_this.getLoginWindow = function() {
 		return loginWindow;
 	};

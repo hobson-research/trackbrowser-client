@@ -38,22 +38,7 @@ function UserInfoBar(hackBrowserWindow) {
 		helpBoxEl = document.getElementById("box-link-help");
 		trackingStatusBoxEl = document.getElementById("box-tracking-status");
 		trackingStatusSwitchWrapperEl = document.getElementById("tracking-switch-wrapper");
-
-		hackBrowserWindow.getIPCHandler().requestUserInfo(function(userInfoJSON) {
-			console.log(userInfoJSON);
-
-			try {
-				var userInfo = JSON.parse(userInfoJSON);
-				var researchTypeText = ((userInfo.researchTypeKey === "other") ? userInfo.researchTypeOtherReason : userInfo.researchType);
-
-				_this.updateUserName(userInfo.userName);
-				_this.updateResearchType(researchTypeText);
-				_this.updateCompanies(userInfo.researchCompanies);
-			} catch (ex) {
-				console.log("invalid JSON returned for user info");
-			}
-
-		});
+		_this.syncUserInfoFromMainProcess();
 
 		attachEventHandlers();
 	};
@@ -66,7 +51,7 @@ function UserInfoBar(hackBrowserWindow) {
 		companiesBoxEl.addEventListener("click", handleCompaniesBoxClick);
 		trackingStatusBoxEl.addEventListener("click", handleTrackingStatusBoxClick);
 		helpBoxEl.addEventListener("click", handleHelpBoxClick);
-	};
+	}
 
 	var handleResearchTypeBoxClick = function(e) {
 		hackBrowserWindow.getIPCHandler().requestResearchTopicWindowOpen();
@@ -110,6 +95,25 @@ function UserInfoBar(hackBrowserWindow) {
 
 	_this.updateCompanies = function(val) {
 		companiesTextEl.textContent = val;
+	};
+
+	_this.syncUserInfoFromMainProcess = function() {
+		console.log("UserInfoBar.syncUserInfoFromMainProcess()");
+
+		hackBrowserWindow.getIPCHandler().requestUserInfo(function(userInfoJSON) {
+			console.log(userInfoJSON);
+
+			try {
+				var userInfo = JSON.parse(userInfoJSON);
+				var researchTypeText = ((userInfo.researchTypeKey === "other") ? userInfo.researchTypeOtherReason : userInfo.researchType);
+
+				_this.updateUserName(userInfo.userName);
+				_this.updateResearchType(researchTypeText);
+				_this.updateCompanies(userInfo.researchCompanies);
+			} catch (ex) {
+				console.log("invalid JSON returned for user info");
+			}
+		});
 	};
 
 	_this.setTrackingMode = function(enable) {
