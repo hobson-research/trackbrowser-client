@@ -165,7 +165,7 @@ function HackBrowserWindowManager(mainProcessController) {
 
 		researchTopicWindow.loadURL("file://" + __app.basePath + "/html-pages/research-topic.html");
 
-		researchTopicWindow.openDevTools();
+		// researchTopicWindow.openDevTools();
 
 		researchTopicWindow.on('closed', function() {
 			researchTopicWindow = null;
@@ -205,7 +205,7 @@ function HackBrowserWindowManager(mainProcessController) {
 			browserWindow.loadURL("file://" + __app.basePath + "/html-pages/browser-window.html");
 
 			// Open the DevTools (debugging)
-			browserWindow.openDevTools();
+			// browserWindow.openDevTools();
 
 			browserWindowList[browserWindow.id] = browserWindow;
 			attachEventHandlers(browserWindow);

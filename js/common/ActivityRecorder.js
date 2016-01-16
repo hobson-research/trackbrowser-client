@@ -67,7 +67,7 @@ function ActivityRecorder(mainProcessController) {
 		console.log("in postImage()");
 		console.log("imagePath is " + imagePath);
 
-		// Test image post
+		// post image data
 		request.post({
 			url: tbServerHost + ":" + tbServerPort + "/api/v1/screenshot",
 			formData: formData
@@ -78,6 +78,11 @@ function ActivityRecorder(mainProcessController) {
 
 			console.log('Upload successful!, server response with body');
 			console.log(body);
+
+			// go ahead and delete the image from local hard drive
+			fs.unlink(imagePath, function(err) {
+
+			});
 		});
 	};
 

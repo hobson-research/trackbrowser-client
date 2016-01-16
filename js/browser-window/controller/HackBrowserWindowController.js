@@ -29,7 +29,7 @@ function HackBrowserWindowController() {
 	var openTabViewCount;
 	var tabList;
 
-	var trackingStatus;
+	var isTrackingOn;
 	var userName;
 	var dataPath;
 
@@ -52,7 +52,7 @@ function HackBrowserWindowController() {
 		openTabViewCount = 0;
 		tabList = {};
 
-		trackingStatus = true;
+		isTrackingOn = true;
 
 		ipcHandler.requestUserInfo(function(userInfoObj) {
 			userInfoObj = JSON.parse(userInfoObj);
@@ -339,12 +339,18 @@ function HackBrowserWindowController() {
 		});
 	};
 
-	_this.isTrackingOn = function() {
-		return trackingStatus;
+	_this.getIsTrackingOn = function() {
+		return isTrackingOn;
 	};
 
-	_this.setTrackingOnOff = function(isOn) {
-		trackingStatus = isOn;
+	_this.setIsTrackingOn = function(isOn) {
+		isTrackingOn = isOn;
+
+		if (isOn === true) {
+			userInfoBar.setTrackingMode(true);
+		} else {
+			userInfoBar.setTrackingMode(false);
+		}
 	};
 
 	init();

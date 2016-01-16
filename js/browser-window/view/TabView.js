@@ -132,15 +132,15 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 		// clear loading icon
 		browserTab.stopLoading();
 
-		// send ipc message to record navigation
-		hackBrowserWindow.getIPCHandler().sendNavigationData(tabViewId, webViewEl.getURL(), function(result) {
-			if (result === true) {
-				console.log("[" + tabViewId + "] navigation data successfully recorded to server");
-			}
-		});
-
 		// take screenshot and notify main process via ipc
-		if (hackBrowserWindow.isTrackingOn() === true) {
+		if (hackBrowserWindow.getIsTrackingOn() === true) {
+			// send ipc message to record navigation
+			hackBrowserWindow.getIPCHandler().sendNavigationData(tabViewId, webViewEl.getURL(), function(result) {
+				if (result === true) {
+					console.log("[" + tabViewId + "] navigation data successfully recorded to server");
+				}
+			});
+
 			if (hackBrowserWindow.getActiveTabView() === _this) {
 				hackBrowserWindow.captureActiveWebView(function(imgPath) {
 					hackBrowserWindow.getIPCHandler().requestScreenshotUpload(tabViewId, webViewURL, imgPath, function() {});
@@ -250,11 +250,11 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 				}
 
 				else if ((msgObject.eventType === "focus") && (msgObject.type === "input/password")) {
-					// hackBrowserWindow.setTrackingOnOff(false);
+					// hackBrowserWindow.setIsTrackingOn(false);
 				}
 
 				else if ((msgObject.eventType === "blur") && (msgObject.type === "input/password")) {
-					// hackBrowserWindow.setTrackingOnOff(true);
+					// hackBrowserWindow.setIsTrackingOn(true);
 				}
 			} catch(err) {
 				// console.error(err);

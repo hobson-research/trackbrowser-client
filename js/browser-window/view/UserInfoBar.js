@@ -80,14 +80,11 @@ function UserInfoBar(hackBrowserWindow) {
 	};
 
 	var toggleTrackingMode = function() {
-		if (hackBrowserWindow.isTrackingOn() === true) {
-			hackBrowserWindow.setTrackingOnOff(false);
-			_this.setTrackingMode(false);
-			trackingStatusTextEl.textContent = "Off";
+		if (hackBrowserWindow.getIsTrackingOn() === false) {
+			hackBrowserWindow.setIsTrackingOn(true);
+
 		} else {
-			hackBrowserWindow.setTrackingOnOff(true);
-			_this.setTrackingMode(true);
-			trackingStatusTextEl.textContent = "On";
+			hackBrowserWindow.setIsTrackingOn(false);
 		}
 	};
 
@@ -129,8 +126,10 @@ function UserInfoBar(hackBrowserWindow) {
 	_this.setTrackingMode = function(enable) {
 		if (enable === true) {
 			trackingStatusSwitchWrapperEl.classList.add("on");
+			trackingStatusTextEl.textContent = "On";
 		} else {
 			trackingStatusSwitchWrapperEl.classList.remove("on");
+			trackingStatusTextEl.textContent = "Off";
 		}
 	};
 
