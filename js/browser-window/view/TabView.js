@@ -82,6 +82,8 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 		webViewEl.addEventListener("did-navigate", handleDidNavigate);
 		webViewEl.addEventListener("did-navigate-in-page", handleDidNavigateInPage);
 		webViewEl.addEventListener("console-message", handleConsoleMessage);
+
+
 	};
 
 	var handleLoadCommit = function(e) {

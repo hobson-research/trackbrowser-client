@@ -15,6 +15,15 @@ function ActivityRecorder(mainProcessController) {
 	var init = function() {
 	};
 
+	var addDateTimeToPostObj = function(msgObj) {
+		var recordDate = new Date();
+
+		msgObj.date = recordDate.toGMTString();
+		msgObj.timestamp = recordDate.getTime();
+
+		return msgObj;
+	};
+
 	_this.checkServerAlive = function(errorCallback, successCallback) {
 		request
 			.get(tbServerHost + ":" + tbServerPort + "/api/v1/echo")
@@ -40,6 +49,8 @@ function ActivityRecorder(mainProcessController) {
 		// add userName to userInfoObj
 		userInfoObj.userName = userName;
 
+		userInfoObj = addDateTimeToPostObj(userInfoObj);
+
 		request.post({
 			url: tbServerHost + ":" + tbServerPort + "/api/v1/researchtopic",
 			formData: userInfoObj
@@ -47,16 +58,15 @@ function ActivityRecorder(mainProcessController) {
 	};
 
 	_this.recordNavigation = function(tabViewId, url) {
-		var recordDate = new Date();
-
 		var recordNavigationData = {
 			type: 'navigation',
 			userName: userName,
 			tabViewId: tabViewId,
-			date: recordDate.toGMTString(),
-			timestamp: recordDate.getTime(),
 			url: url
 		};
+
+		// add date & time
+		recordNavigationData = addDateTimeToPostObj(recordNavigationData);
 
 		request.post({
 			url: tbServerHost + ":" + tbServerPort + "/api/v1/browsingdata",
@@ -64,18 +74,22 @@ function ActivityRecorder(mainProcessController) {
 		});
 	};
 
-	_this.uploadScreenshot = function(tabViewId, imagePath) {
-		var recordDate = new Date();
+	// TODO: add handling for file downloads
+	_this.recordFileDownload = function() {
 
+	};
+
+	_this.uploadScreenshot = function(tabViewId, url, imagePath) {
 		var formData = {
 			type: 'screenshot',
 			userName: userName,
 			tabViewId: tabViewId,
-			date: recordDate.toGMTString(),
-			timestamp: recordDate.getTime(),
+			url: url,
 			fileName: path.basename(imagePath),
 			imageAttachment: fs.createReadStream(imagePath)
 		};
+
+		formData = addDateTimeToPostObj(formData);
 
 		console.log("in postImage()");
 		console.log("imagePath is " + imagePath);

@@ -24,6 +24,7 @@ function IPCMainProcessHandler(mainProcessController) {
 		ipcMain.on("userNameRequest", handleUserNameRequest);
 		ipcMain.on("userNameCheck", handleUserNameCheck);
 		ipcMain.on("userPictureURLRequest", handleUserPictureURLRequest);
+		ipcMain.on("userPictureWindowCloseRequest", handleUserPictureWindowCloseRequest);
 		ipcMain.on("dataPathRequest", handleDataPathRequest);
 		ipcMain.on("researchTopicWindowOpenRequest", handleResearchTopicWindowOpenRequest);
 		ipcMain.on("researchTopicWindowCancelRequest", handleResearchTopicWindowCancelRequest);
@@ -42,6 +43,7 @@ function IPCMainProcessHandler(mainProcessController) {
 		var userName = arg;
 
 		// TODO: check username check logic
+
 		if (true) {
 			event.sender.send("userNameCheckResult", true);
 			mainProcessEventEmitter.emit("userNameCheckPass", userName);
@@ -52,6 +54,11 @@ function IPCMainProcessHandler(mainProcessController) {
 
 	var handleUserPictureURLRequest = function(event, arg) {
 		event.sender.send("userPictureURLResponse", mainProcessController.getPictureURL());
+	};
+
+	var handleUserPictureWindowCloseRequest = function(event, arg) {
+		event.sender.send("userPictureWindowCloseResponse", true);
+		mainProcessEventEmitter.emit("userPictureWindowCloseRequest", true);
 	};
 
 	var handleDataPathRequest = function(event, arg) {
@@ -110,7 +117,7 @@ function IPCMainProcessHandler(mainProcessController) {
 	var handleScreenshotUploadRequest = function(event, screenshotDataJSON) {
 		var screenshotDataObj = JSON.parse(screenshotDataJSON);
 
-		mainProcessController.getActivityRecorder().uploadScreenshot(screenshotDataObj.tabViewId, screenshotDataObj.filePath);
+		mainProcessController.getActivityRecorder().uploadScreenshot(screenshotDataObj.tabViewId, screenshotDataObj.url, screenshotDataObj.filePath);
 	};
 
 	init();

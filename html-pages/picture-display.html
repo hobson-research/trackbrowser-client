@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Track Browser</title>
+
+	<link rel="stylesheet" href="css/cssreset-min.css">
+	<link href='https://fonts.googleapis.com/css?family=Roboto:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
+
+	<style>
+		body {
+			color: #333;
+			font-size: 20px;
+			line-height: 20px;
+			font-family: 'Roboto', "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+			font-weight: 400;
+			-webkit-font-smoothing: antialiased;
+			/* Fix for webkit rendering */
+			-webkit-text-size-adjust: 100%;
+			position: relative;
+		}
+
+		#picture-display-wrapper {
+			text-align: center;
+		}
+
+		#picture-wrapper {
+			padding-top: 15px;
+		}
+
+		a.button {
+			cursor: pointer;
+			display: inline-block;
+			margin: 15px 0;
+			padding-bottom: 5px;
+			border-bottom: 1px solid #444;
+		}
+
+		a.button:hover {
+			color: #7d40b8;
+			border-color: #7d40b8;
+		}
+
+		img {
+			max-width: 100%;
+		}
+	</style>
+
+	<script>
+		(function() {
+			'use strict';
+
+			const ipcRenderer = require("electron").ipcRenderer;
+
+			var pictureEl;
+			var continueBtnEl;
+
+			document.addEventListener("DOMContentLoaded", function() {
+				pictureEl = document.getElementById("picture-display");
+				continueBtnEl = document.getElementById("btn-continue");
+
+				ipcRenderer.send("userPictureURLRequest", true);
+				ipcRenderer.once("userPictureURLResponse", function(e, pictureURL) {
+					console.log("pictureURL: " + pictureURL);
+
+					pictureEl.src = pictureURL;
+
+					continueBtnEl.addEventListener("click", function(e) {
+						ipcRenderer.send("userPictureWindowCloseRequest", true);
+						ipcRenderer.once("userPictureWindowCloseResponse", function(e, arg) {
+							console.log(e);
+							console.log(arg);
+						});
+
+						e.preventDefault();
+					});
+				});
+			});
+		})();
+	</script>
+</head>
+<body>
+<div id="picture-display-wrapper">
+	<div id="picture-wrapper">
+		<img id="picture-display" />
+	</div>
+
+	<a id="btn-continue" class="button">Continue</a>
+</div><!-- // #picture-display-wrapper -->
+</body>
+</html>

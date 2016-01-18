@@ -6,9 +6,10 @@ const app = electron.app;
 const fs = require("fs");
 const dialog = require("dialog");
 const EventEmitter = require("events").EventEmitter;
+const session = require("electron").session;
 const HackBrowserWindowManager = require(GLOBAL.__app.basePath + "/js/main-process/HackBrowserWindowManager");
 const IPCMainProcessHandler = require(GLOBAL.__app.basePath + "/js/main-process/IPCMainProcessHandler");
-const ActivityRecorder = require(GLOBAL.__app.basePath + "/js/common/ActivityRecorder.js");
+const ActivityRecorder = require(GLOBAL.__app.basePath + "/js/main-process/ActivityRecorder.js");
 
 function MainProcessController() {
 	var _this = this;
@@ -17,7 +18,11 @@ function MainProcessController() {
 	var recorder;
 	var ipcHandler;
 	var mainProcessEventEmitter;
-	var pictureURL;
+	var pictureInfo = {
+		url: null,
+		width: 0,
+		height: 0
+	};
 
 	var participantData = {
 		userName: null,
@@ -43,6 +48,10 @@ function MainProcessController() {
 		});
 
 		app.on("ready", function() {
+			session.defaultSession.on("will-download", function(event, item, webContents) {
+				console.log(item);
+			});
+
 			// check if .data directory exists
 			fs.exists(GLOBAL.__app.dataPath, function(exists) {
 				if (exists === false) {
@@ -125,11 +134,11 @@ function MainProcessController() {
 	};
 
 	_this.getPictureURL = function() {
-		return pictureURL;
+		return pictureInfo.url;
 	};
 
 	_this.setPictureURL = function(url) {
-		pictureURL = url;
+		pictureInfo.url = url;
 	};
 }
 

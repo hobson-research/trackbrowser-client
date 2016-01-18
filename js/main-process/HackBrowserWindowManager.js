@@ -36,53 +36,9 @@ function HackBrowserWindowManager(mainProcessController) {
 
 		mainProcessEventEmitter = mainProcessController.getMainProcessEventEmitter();
 
-		mainProcessEventEmitter.on("userNameCheckPass", function(userName) {
-			console.log("userNameCheckPass event received");
-
-			mainProcessController.setParticipantDataItem("userName", userName);
-
-			// also set userName in ActivityRecorder
-			mainProcessController.getActivityRecorder().setParticipantUserName(userName);
-
-			// get picture URL
-			mainProcessController.getActivityRecorder().getPictureURL(
-				function(err) {
-					dialog.showErrorBox('Error retrieving picture URL', 'Server is not responding. ');
-				},
-				function(imageURL) {
-					mainProcessController.setPictureURL(imageURL);
-
-					console.log(imageURL);
-
-					// _this.openResearchTopicWindow();
-					_this.openPictureDisplayWindow();
-					_this.closeLoginWindow();
-				}
-			);
-		});
-
-		mainProcessEventEmitter.on("researchTopicInputComplete", function(msgObject) {
-			console.log("researchTopicInputComplete");
-
-			var isNewSession = msgObject.isNewSession;
-			var researchTopicData = msgObject.researchTopicData;
-
-			for (var key in researchTopicData) {
-				if (researchTopicData.hasOwnProperty(key)) {
-					mainProcessController.setParticipantDataItem(key, researchTopicData[key]);
-				}
-			}
-
-			mainProcessController.getActivityRecorder().recordUserInfo(researchTopicData);
-
-			if (isNewSession === true) {
-				_this.openNewBrowserWindow(function() {
-					_this.closeResearchTopicWindow();
-				});
-			} else {
-				_this.closeResearchTopicWindow();
-			}
-		});
+		mainProcessEventEmitter.on("userNameCheckPass", handleUserNameCheckPass);
+		mainProcessEventEmitter.on("userPictureWindowCloseRequest", handleUserPictureWindowCloseRequest);
+		mainProcessEventEmitter.on("researchTopicInputComplete", handleResearchTopicInputComplete);
 	};
 
 	var attachEventHandlers = function(browserWindow) {
@@ -113,6 +69,62 @@ function HackBrowserWindowManager(mainProcessController) {
 			}
 		});
 	};
+
+	var handleUserNameCheckPass = function(userName) {
+		console.log("userNameCheckPass event received");
+
+		mainProcessController.setParticipantDataItem("userName", userName);
+
+		// also set userName in ActivityRecorder
+		mainProcessController.getActivityRecorder().setParticipantUserName(userName);
+
+		// get picture URL
+		mainProcessController.getActivityRecorder().getPictureURL(
+			function(err) {
+				dialog.showErrorBox('Error retrieving picture URL', 'Server is not responding. ');
+			},
+			function(imageInfoJSON) {
+				var imageInfoObj = JSON.parse(imageInfoJSON);
+
+				mainProcessController.setPictureURL(imageInfoObj.url);
+
+				console.log(imageInfoObj.url);
+
+				// _this.openResearchTopicWindow();
+				_this.openPictureDisplayWindow();
+				_this.closeLoginWindow();
+			}
+		);
+	};
+
+	var handleUserPictureWindowCloseRequest= function() {
+		_this.openResearchTopicWindow();
+		_this.closePictureDisplayWindow();
+	};
+
+	var handleResearchTopicInputComplete = function(msgObject) {
+		console.log("researchTopicInputComplete");
+
+		var isNewSession = msgObject.isNewSession;
+		var researchTopicData = msgObject.researchTopicData;
+
+		for (var key in researchTopicData) {
+			if (researchTopicData.hasOwnProperty(key)) {
+				mainProcessController.setParticipantDataItem(key, researchTopicData[key]);
+			}
+		}
+
+		mainProcessController.getActivityRecorder().recordUserInfo(researchTopicData);
+
+		if (isNewSession === true) {
+			_this.openNewBrowserWindow(function() {
+				_this.closeResearchTopicWindow();
+			});
+		} else {
+			_this.closeResearchTopicWindow();
+		}
+	};
+
 
 	/* ====================================
 	 public methods
@@ -247,7 +259,7 @@ function HackBrowserWindowManager(mainProcessController) {
 			browserWindow.loadURL("file://" + __app.basePath + "/html-pages/browser-window.html");
 
 			// Open the DevTools (debugging)
-			// browserWindow.openDevTools();
+			browserWindow.openDevTools();
 
 			browserWindowList[browserWindow.id] = browserWindow;
 			attachEventHandlers(browserWindow);
