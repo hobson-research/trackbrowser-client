@@ -18,6 +18,7 @@ function HackBrowserWindowManager(mainProcessController) {
 	var createdWindowCount = 0;
 
 	var loginWindow;
+	var pictureDisplayWindow;
 	var researchTopicWindow;
 	var browserWindow;
 	var helpWindow;
@@ -28,6 +29,7 @@ function HackBrowserWindowManager(mainProcessController) {
 	 ====================================== */
 	var init = function() {
 		loginWindow = null;
+		pictureDisplayWindow = null;
 		researchTopicWindow = null;
 		browserWindow = null;
 		helpWindow = null;
@@ -42,8 +44,21 @@ function HackBrowserWindowManager(mainProcessController) {
 			// also set userName in ActivityRecorder
 			mainProcessController.getActivityRecorder().setParticipantUserName(userName);
 
-			_this.openResearchTopicWindow();
-			_this.closeLoginWindow();
+			// get picture URL
+			mainProcessController.getActivityRecorder().getPictureURL(
+				function(err) {
+					dialog.showErrorBox('Error retrieving picture URL', 'Server is not responding. ');
+				},
+				function(imageURL) {
+					mainProcessController.setPictureURL(imageURL);
+
+					console.log(imageURL);
+
+					// _this.openResearchTopicWindow();
+					_this.openPictureDisplayWindow();
+					_this.closeLoginWindow();
+				}
+			);
 		});
 
 		mainProcessEventEmitter.on("researchTopicInputComplete", function(msgObject) {
@@ -140,11 +155,38 @@ function HackBrowserWindowManager(mainProcessController) {
 	_this.openPictureDisplayWindow = function(callback) {
 		callback = callback || function() {};
 
+		// if research topic input window is already open,
+		// do nothing
+		if (pictureDisplayWindow !== null) {
+			return;
+		}
+
+		// Create the login window
+		pictureDisplayWindow = new BrowserWindow({
+			width:600,
+			height: 400,
+			resizable: true,
+			frame: true
+		});
+
+		pictureDisplayWindow.loadURL("file://" + __app.basePath + "/html-pages/picture-display.html");
+
+		pictureDisplayWindow.openDevTools();
+
+		pictureDisplayWindow.on('closed', function() {
+			pictureDisplayWindow = null;
+		});
+
 		callback();
 	};
 
 	_this.closePictureDisplayWindow = function(callback) {
 		callback = callback || function() {};
+
+		// close login window
+		pictureDisplayWindow.close();
+
+		callback();
 	};
 
 	_this.openResearchTopicWindow = function(callback) {
@@ -240,6 +282,10 @@ function HackBrowserWindowManager(mainProcessController) {
 
 	_this.closeHelpWindow = function(callback) {
 		callback = callback || function() {};
+
+		helpWindow.close();
+
+		callback();
 	};
 
 	_this.getBrowserWindow = function() {

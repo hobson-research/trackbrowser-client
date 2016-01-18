@@ -13,7 +13,6 @@ function ActivityRecorder(mainProcessController) {
 	var userName;
 
 	var init = function() {
-		userName = mainProcessController.getParticipantUserName();
 	};
 
 	_this.checkServerAlive = function(errorCallback, successCallback) {
@@ -21,6 +20,20 @@ function ActivityRecorder(mainProcessController) {
 			.get(tbServerHost + ":" + tbServerPort + "/api/v1/echo")
 			.on('error', errorCallback)
 			.on('response', successCallback);
+	};
+
+	_this.getPictureURL = function(errorCallback, successCallback) {
+		request(tbServerHost + ":" + tbServerPort + "/api/v1/picture/user/" + userName, function(error, response, body) {
+			if (!error && response.statusCode == 200) {
+				successCallback(body);
+			} else {
+				if (error) {
+					// server not responding
+				} else {
+					// invalid response code
+				}
+			}
+		});
 	};
 
 	_this.recordUserInfo = function(userInfoObj) {

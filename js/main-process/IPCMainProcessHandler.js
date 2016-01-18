@@ -23,6 +23,7 @@ function IPCMainProcessHandler(mainProcessController) {
 	var attachEventHandlers = function() {
 		ipcMain.on("userNameRequest", handleUserNameRequest);
 		ipcMain.on("userNameCheck", handleUserNameCheck);
+		ipcMain.on("userPictureURLRequest", handleUserPictureURLRequest);
 		ipcMain.on("dataPathRequest", handleDataPathRequest);
 		ipcMain.on("researchTopicWindowOpenRequest", handleResearchTopicWindowOpenRequest);
 		ipcMain.on("researchTopicWindowCancelRequest", handleResearchTopicWindowCancelRequest);
@@ -47,6 +48,10 @@ function IPCMainProcessHandler(mainProcessController) {
 		} else {
 			event.sender.send("userNameCheckResult", false);
 		}
+	};
+
+	var handleUserPictureURLRequest = function(event, arg) {
+		event.sender.send("userPictureURLResponse", mainProcessController.getPictureURL());
 	};
 
 	var handleDataPathRequest = function(event, arg) {
@@ -103,8 +108,6 @@ function IPCMainProcessHandler(mainProcessController) {
 	};
 
 	var handleScreenshotUploadRequest = function(event, screenshotDataJSON) {
-		var recordDate = new Date();
-
 		var screenshotDataObj = JSON.parse(screenshotDataJSON);
 
 		mainProcessController.getActivityRecorder().uploadScreenshot(screenshotDataObj.tabViewId, screenshotDataObj.filePath);

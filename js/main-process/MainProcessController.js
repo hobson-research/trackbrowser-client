@@ -17,6 +17,7 @@ function MainProcessController() {
 	var recorder;
 	var ipcHandler;
 	var mainProcessEventEmitter;
+	var pictureURL;
 
 	var participantData = {
 		userName: null,
@@ -72,13 +73,6 @@ function MainProcessController() {
 		// create a shared EventEmitter for windowManager to communicate with ipcHandler
 		mainProcessEventEmitter = new EventEmitter();
 
-		// TODO: remove this line
-		/*
-		 if (_this.getParticipantUserName() === null) {
-		 _this.setParticipantDataItem("userName", "test");
-		 }
-		 */
-
 		windowManager = new HackBrowserWindowManager(_this);
 		recorder = new ActivityRecorder(_this);
 		ipcHandler = new IPCMainProcessHandler(_this);
@@ -92,9 +86,6 @@ function MainProcessController() {
 			function(response) {
 				if (response.statusCode === 200) {
 					windowManager.openLoginWindow();
-
-					// for debugging
-					// windowManager.openNewBrowserWindow();
 				}
 			}
 		);
@@ -131,6 +122,14 @@ function MainProcessController() {
 
 	_this.getWindowManager = function() {
 		return windowManager;
+	};
+
+	_this.getPictureURL = function() {
+		return pictureURL;
+	};
+
+	_this.setPictureURL = function(url) {
+		pictureURL = url;
 	};
 }
 
