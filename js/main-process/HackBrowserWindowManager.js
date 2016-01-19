@@ -21,6 +21,7 @@ function HackBrowserWindowManager(mainProcessController) {
 	var pictureDisplayWindow;
 	var researchTopicWindow;
 	var browserWindow;
+	var browserPictureDisplayWindow;
 	var helpWindow;
 
 
@@ -32,6 +33,7 @@ function HackBrowserWindowManager(mainProcessController) {
 		pictureDisplayWindow = null;
 		researchTopicWindow = null;
 		browserWindow = null;
+		browserPictureDisplayWindow = null;
 		helpWindow = null;
 
 		mainProcessEventEmitter = mainProcessController.getMainProcessEventEmitter();
@@ -41,11 +43,27 @@ function HackBrowserWindowManager(mainProcessController) {
 		mainProcessEventEmitter.on("researchTopicInputComplete", handleResearchTopicInputComplete);
 	};
 
-	var attachEventHandlers = function(browserWindow) {
+	var attachEventHandlersToBrowserWindow = function(browserWindow) {
 		var windowId = browserWindow.id;
 
+		browserWindow.on("move", function(e) {
+			repositionBrowserPictureDisplayWindow();
+		});
+
+		browserWindow.on("resize", function(e) {
+			repositionBrowserPictureDisplayWindow();
+		});
+
+		browserWindow.on("blur", function(e) {
+			setBrowserPictureDisplayWindowVisibility(false);
+		});
+
+		browserWindow.on("focus", function(e) {
+			setBrowserPictureDisplayWindowVisibility(true);
+		});
+
 		// save browser window's width/height when user closes it
-		browserWindow.on('close', function(e) {
+		browserWindow.on("close", function(e) {
 			var size = browserWindow.getSize();
 
 			var sizeObject = {
@@ -56,11 +74,14 @@ function HackBrowserWindowManager(mainProcessController) {
 			// save to persistent storage
 			PersistentStorage.setItem("browserWindowSize", sizeObject);
 
+			// also close in-browser picture display
+			_this.closeBrowserPictureDisplayWindow();
+
 			e.returnValue = false;
 		});
 
 		// remove the window from browserWindowList and remove reference so that GC clear is from memory
-		browserWindow.on('closed', function() {
+		browserWindow.on("closed", function() {
 			if (browserWindowList.hasOwnProperty(windowId)) {
 				console.log("deleting window " + windowId);
 
@@ -70,25 +91,24 @@ function HackBrowserWindowManager(mainProcessController) {
 		});
 	};
 
+	/**
+	 * event handler for username check pass result
+	 *
+	 * @param {string} userName
+	 */
 	var handleUserNameCheckPass = function(userName) {
-		console.log("userNameCheckPass event received");
-
 		mainProcessController.setParticipantDataItem("userName", userName);
 
 		// also set userName in ActivityRecorder
 		mainProcessController.getActivityRecorder().setParticipantUserName(userName);
 
 		// get picture URL
-		mainProcessController.getActivityRecorder().getPictureURL(
+		mainProcessController.getActivityRecorder().getUserPictureInfoFromServer(
 			function(err) {
 				dialog.showErrorBox('Error retrieving picture URL', 'Server is not responding. ');
 			},
-			function(imageInfoJSON) {
-				var imageInfoObj = JSON.parse(imageInfoJSON);
-
-				mainProcessController.setPictureURL(imageInfoObj.url);
-
-				console.log(imageInfoObj.url);
+			function(imageInfoObj) {
+				mainProcessController.setPictureInfo(imageInfoObj);
 
 				// _this.openResearchTopicWindow();
 				_this.openPictureDisplayWindow();
@@ -97,14 +117,21 @@ function HackBrowserWindowManager(mainProcessController) {
 		);
 	};
 
+	/**
+	 * close "picture display" window and open research topic input window
+	 */
 	var handleUserPictureWindowCloseRequest= function() {
 		_this.openResearchTopicWindow();
 		_this.closePictureDisplayWindow();
 	};
 
+	/**
+	 * handle user's research topic information input from window
+	 * and pass it to an ActivityRecorder instance to post to TrackBrowser server
+	 *
+	 * @param {object} msgObject containing user's research topic data
+	 */
 	var handleResearchTopicInputComplete = function(msgObject) {
-		console.log("researchTopicInputComplete");
-
 		var isNewSession = msgObject.isNewSession;
 		var researchTopicData = msgObject.researchTopicData;
 
@@ -126,9 +153,38 @@ function HackBrowserWindowManager(mainProcessController) {
 	};
 
 
+	var repositionBrowserPictureDisplayWindow = function() {
+		// if either browserWindow or browserPictureDisplayWindow is not open, do nothing
+		if ((browserWindow === null) || (browserPictureDisplayWindow === null)) return;
+
+		var browserWindowBounds = browserWindow.getBounds();
+
+		var newXPos = browserWindowBounds.x + browserWindowBounds.width + 10;
+		var newYPos = browserWindowBounds.y;
+
+		browserPictureDisplayWindow.setPosition(newXPos, newYPos);
+	};
+
+	var setBrowserPictureDisplayWindowVisibility = function(isVisible) {
+		// if either browserWindow or browserPictureDisplayWindow is not open, do nothing
+		if ((browserWindow === null) || (browserPictureDisplayWindow === null)) return;
+
+		if (isVisible === true) {
+			browserPictureDisplayWindow.showInactive();
+		} else {
+			browserPictureDisplayWindow.hide();
+		}
+	};
+
+
 	/* ====================================
 	 public methods
 	 ====================================== */
+	/**
+	 * open login window
+	 *
+	 * @param callback
+	 */
 	_this.openLoginWindow = function(callback) {
 		callback = callback || function() {};
 
@@ -155,6 +211,11 @@ function HackBrowserWindowManager(mainProcessController) {
 		callback();
 	};
 
+	/**
+	 * close login window
+	 *
+	 * @param callback
+	 */
 	_this.closeLoginWindow = function(callback) {
 		callback = callback || function() {};
 
@@ -164,6 +225,11 @@ function HackBrowserWindowManager(mainProcessController) {
 		callback();
 	};
 
+	/**
+	 * open "picture display" window
+	 *
+	 * @param callback
+	 */
 	_this.openPictureDisplayWindow = function(callback) {
 		callback = callback || function() {};
 
@@ -173,17 +239,30 @@ function HackBrowserWindowManager(mainProcessController) {
 			return;
 		}
 
-		// Create the login window
+		var pictureInfo = mainProcessController.getPictureInfo();
+
+		var windowWidth = 600;
+
+		// if the image's width is smaller than default window width,
+		// fit the window's width to image width
+		if (windowWidth > pictureInfo.width) {
+			windowWidth = pictureInfo.width;
+		}
+
+		// calculate width/height ratio
+		var widthHeightRatio = pictureInfo.width / pictureInfo.height;
+
+		var windowHeight = Math.ceil(windowWidth * (1 / widthHeightRatio)) + 60;
+
+		// create the picture display window
 		pictureDisplayWindow = new BrowserWindow({
-			width:600,
-			height: 400,
-			resizable: true,
-			frame: true
+			width: windowWidth,
+			height: windowHeight,
+			resizable: false,
+			frame: false
 		});
 
 		pictureDisplayWindow.loadURL("file://" + __app.basePath + "/html-pages/picture-display.html");
-
-		pictureDisplayWindow.openDevTools();
 
 		pictureDisplayWindow.on('closed', function() {
 			pictureDisplayWindow = null;
@@ -192,6 +271,11 @@ function HackBrowserWindowManager(mainProcessController) {
 		callback();
 	};
 
+	/**
+	 * close "picture display" window
+	 *
+	 * @param callback
+	 */
 	_this.closePictureDisplayWindow = function(callback) {
 		callback = callback || function() {};
 
@@ -201,6 +285,11 @@ function HackBrowserWindowManager(mainProcessController) {
 		callback();
 	};
 
+	/**
+	 * open "research topic" window
+	 *
+	 * @param callback
+	 */
 	_this.openResearchTopicWindow = function(callback) {
 		callback = callback || function() {};
 
@@ -228,6 +317,11 @@ function HackBrowserWindowManager(mainProcessController) {
 		callback();
 	};
 
+	/**
+	 * close "research topic" window
+	 *
+	 * @param callback
+	 */
 	_this.closeResearchTopicWindow = function(callback) {
 		callback = callback || function() {};
 
@@ -236,6 +330,10 @@ function HackBrowserWindowManager(mainProcessController) {
 		callback();
 	};
 
+	/**
+	 * open a new browser(TrackBrowser) window
+	 * @param callback
+	 */
 	_this.openNewBrowserWindow = function(callback) {
 		callback = callback || function() {};
 
@@ -262,7 +360,9 @@ function HackBrowserWindowManager(mainProcessController) {
 			browserWindow.openDevTools();
 
 			browserWindowList[browserWindow.id] = browserWindow;
-			attachEventHandlers(browserWindow);
+			attachEventHandlersToBrowserWindow(browserWindow);
+
+			_this.openBrowserPictureDisplayWindow();
 
 			// increase window count
 			createdWindowCount++;
@@ -271,6 +371,73 @@ function HackBrowserWindowManager(mainProcessController) {
 		});
 	};
 
+	/**
+	 * open in-browser "picture display" window
+	 *
+	 * @param callback
+	 */
+	_this.openBrowserPictureDisplayWindow = function(callback) {
+		callback = callback || function() {};
+
+		console.log("HackBrowserWindowManager.openBrowserPictureDisplayWindow()");
+
+		// if browser picture display window is already open,
+		// do nothing
+		if (browserPictureDisplayWindow !== null) {
+			return;
+		}
+
+		var pictureInfo = mainProcessController.getPictureInfo();
+
+		// make max window width small
+		var windowWidth = 250;
+
+		// if the image's width is smaller than default window width,
+		// fit the window's width to image width
+		if (windowWidth > pictureInfo.width) {
+			windowWidth = pictureInfo.width;
+		}
+
+		// calculate width/height ratio
+		var widthHeightRatio = pictureInfo.width / pictureInfo.height;
+		var windowHeight = Math.ceil(windowWidth * (1 / widthHeightRatio));
+
+		// create the picture display window
+		browserPictureDisplayWindow = new BrowserWindow({
+			width: windowWidth,
+			height: windowHeight,
+			resizable: false,
+			frame: false
+		});
+
+		browserPictureDisplayWindow.loadURL("file://" + __app.basePath + "/html-pages/browser-window-picture-display.html");
+
+		browserPictureDisplayWindow.on('closed', function() {
+			browserPictureDisplayWindow = null;
+		});
+
+		callback();
+	};
+
+	/**
+	 * close in-browser "picture display" window
+	 *
+	 * @param callback
+	 */
+	_this.closeBrowserPictureDisplayWindow = function(callback) {
+		callback = callback || function() {};
+
+		// close login window
+		browserPictureDisplayWindow.close();
+
+		callback();
+	};
+
+	/**
+	 * open help window
+	 *
+	 * @param callback
+	 */
 	_this.openHelpWindow = function(callback) {
 		callback = callback || function() {};
 
@@ -292,6 +459,11 @@ function HackBrowserWindowManager(mainProcessController) {
 		callback();
 	};
 
+	/**
+	 * close help window
+	 *
+	 * @param callback
+	 */
 	_this.closeHelpWindow = function(callback) {
 		callback = callback || function() {};
 

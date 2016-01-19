@@ -16,8 +16,8 @@
 			-webkit-font-smoothing: antialiased;
 			/* Fix for webkit rendering */
 			-webkit-text-size-adjust: 100%;
-			position: relative;
 			-webkit-app-region: drag;
+			position: relative;
 		}
 
 		#picture-display-wrapper {
@@ -25,24 +25,6 @@
 		}
 
 		#picture-wrapper {
-		}
-
-		a.button {
-			cursor: pointer;
-			display: inline-block;
-			margin: 15px 0;
-			padding-bottom: 5px;
-			border-bottom: 1px solid #444;
-		}
-
-		a.button:hover {
-			color: #7d40b8;
-			border-color: #7d40b8;
-		}
-
-		a#btn-continue {
-			-webkit-app-region: no-drag;
-			display: none;
 		}
 
 		img {
@@ -57,46 +39,25 @@
 			const ipcRenderer = require("electron").ipcRenderer;
 
 			var pictureEl;
-			var continueBtnEl;
 
 			document.addEventListener("DOMContentLoaded", function() {
 				pictureEl = document.getElementById("picture-display");
-				continueBtnEl = document.getElementById("btn-continue");
 
 				ipcRenderer.send("userPictureInfoRequest", true);
 				ipcRenderer.once("userPictureInfoResponse", function(e, pictureInfoJSON) {
 					var pictureInfo = JSON.parse(pictureInfoJSON);
 
-					console.log("pictureURL: " + pictureInfo.url);
-
 					pictureEl.src = pictureInfo.url;
-
-					// display continue button when image is loaded
-					pictureEl.addEventListener("load", function() {
-						continueBtnEl.style.display = "inline-block";
-					});
-
-					continueBtnEl.addEventListener("click", function(e) {
-						ipcRenderer.send("userPictureWindowCloseRequest", true);
-						ipcRenderer.once("userPictureWindowCloseResponse", function(e, arg) {
-							console.log(e);
-							console.log(arg);
-						});
-
-						e.preventDefault();
-					});
 				});
 			});
 		})();
 	</script>
 </head>
 <body>
-<div id="picture-display-wrapper">
-	<div id="picture-wrapper">
-		<img id="picture-display" />
+	<div id="picture-display-wrapper">
+		<div id="picture-wrapper">
+			<img id="picture-display" />
+		</div>
 	</div>
-
-	<a id="btn-continue" class="button">Continue</a>
-</div><!-- // #picture-display-wrapper -->
 </body>
 </html>

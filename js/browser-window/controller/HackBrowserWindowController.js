@@ -57,9 +57,6 @@ function HackBrowserWindowController() {
 		ipcHandler.requestUserInfo(function(userInfoObj) {
 			userInfoObj = JSON.parse(userInfoObj);
 			userName = userInfoObj.userName;
-
-			console.log("requestUserInfo response received in HackBrowserWindowController.init()");
-			console.log(userName);
 		});
 
 		// retrieve data path from main process
@@ -331,7 +328,7 @@ function HackBrowserWindowController() {
 					if (err) {
 						console.log("[HackBrowserWindowController] Error generating screenshot file");
 						console.log(err);
-					};
+					}
 
 					callback(filePath);
 				});
@@ -344,13 +341,14 @@ function HackBrowserWindowController() {
 	};
 
 	_this.setIsTrackingOn = function(isOn) {
-		isTrackingOn = isOn;
+		console.log("HackBrowserWindowController.setIsTrackingOn: " + isOn);
 
-		if (isOn === true) {
-			userInfoBar.setTrackingMode(true);
-		} else {
-			userInfoBar.setTrackingMode(false);
-		}
+		isTrackingOn = isOn;
+		userInfoBar.setTrackingMode(isOn);
+
+		ipcHandler.notifyTrackingStatusChange(function() {
+			console.log("notified tracking status update");
+		});
 	};
 
 	init();

@@ -15,9 +15,10 @@ function ActivityRecorder(mainProcessController) {
 	var init = function() {
 	};
 
-	var addDateTimeToPostObj = function(msgObj) {
+	var addCommonInfoToPostObj = function(msgObj) {
 		var recordDate = new Date();
 
+		msgObj.userName = userName;
 		msgObj.date = recordDate.toGMTString();
 		msgObj.timestamp = recordDate.getTime();
 
@@ -31,10 +32,13 @@ function ActivityRecorder(mainProcessController) {
 			.on('response', successCallback);
 	};
 
-	_this.getPictureURL = function(errorCallback, successCallback) {
+	_this.getUserPictureInfoFromServer = function(errorCallback, successCallback) {
 		request(tbServerHost + ":" + tbServerPort + "/api/v1/picture/user/" + userName, function(error, response, body) {
 			if (!error && response.statusCode == 200) {
-				successCallback(body);
+				// parse JSON-response to object
+				var imageInfoObj = JSON.parse(body);
+
+				successCallback(imageInfoObj);
 			} else {
 				if (error) {
 					// server not responding
@@ -46,10 +50,9 @@ function ActivityRecorder(mainProcessController) {
 	};
 
 	_this.recordUserInfo = function(userInfoObj) {
-		// add userName to userInfoObj
-		userInfoObj.userName = userName;
-
-		userInfoObj = addDateTimeToPostObj(userInfoObj);
+		// add username & datetime
+		userInfoObj = addCommonInfoToPostObj(userInfoObj);
+		userInfoObj.type = "research-topic";
 
 		request.post({
 			url: tbServerHost + ":" + tbServerPort + "/api/v1/researchtopic",
@@ -60,13 +63,12 @@ function ActivityRecorder(mainProcessController) {
 	_this.recordNavigation = function(tabViewId, url) {
 		var recordNavigationData = {
 			type: 'navigation',
-			userName: userName,
 			tabViewId: tabViewId,
 			url: url
 		};
 
 		// add date & time
-		recordNavigationData = addDateTimeToPostObj(recordNavigationData);
+		recordNavigationData = addCommonInfoToPostObj(recordNavigationData);
 
 		request.post({
 			url: tbServerHost + ":" + tbServerPort + "/api/v1/browsingdata",
@@ -75,24 +77,25 @@ function ActivityRecorder(mainProcessController) {
 	};
 
 	// TODO: add handling for file downloads
-	_this.recordFileDownload = function() {
+	_this.recordFileDownload = function(itemData) {
+		itemData = addCommonInfoToPostObj(itemData);
 
+		request.post({
+			url: tbServerHost + ":" + tbServerPort + "/api/v1/download",
+			formData: itemData
+		});
 	};
 
 	_this.uploadScreenshot = function(tabViewId, url, imagePath) {
 		var formData = {
 			type: 'screenshot',
-			userName: userName,
 			tabViewId: tabViewId,
 			url: url,
 			fileName: path.basename(imagePath),
 			imageAttachment: fs.createReadStream(imagePath)
 		};
 
-		formData = addDateTimeToPostObj(formData);
-
-		console.log("in postImage()");
-		console.log("imagePath is " + imagePath);
+		formData = addCommonInfoToPostObj(formData);
 
 		// post image data
 		request.post({
@@ -102,9 +105,6 @@ function ActivityRecorder(mainProcessController) {
 			if (err) {
 				return console.error("upload failed: " + err);
 			}
-
-			console.log('Upload successful!, server response with body');
-			console.log(body);
 
 			// go ahead and delete the image from local hard drive
 			fs.unlink(imagePath, function(err) {

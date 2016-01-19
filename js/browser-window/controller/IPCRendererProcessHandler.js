@@ -108,5 +108,14 @@ function IPCRendererProcessHandler(hackBrowserWindow) {
 		});
 	};
 
+	_this.notifyTrackingStatusChange = function(callback) {
+		callback = callback || function() {};
+
+		ipcRenderer.send("trackingStatusChange", hackBrowserWindow.getIsTrackingOn());
+		ipcRenderer.once("trackingStatusChangeConfirm", function(e, result) {
+			callback(result);
+		});
+	};
+
 	init();
 }
