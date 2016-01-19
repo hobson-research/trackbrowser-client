@@ -276,7 +276,7 @@ function HackBrowserWindowManager(mainProcessController) {
 
 		pictureDisplayWindow.loadURL("file://" + __app.basePath + "/html-pages/picture-display.html");
 
-		pictureDisplayWindow.openDevTools();
+		// pictureDisplayWindow.openDevTools();
 
 		pictureDisplayWindow.on('closed', function() {
 			pictureDisplayWindow = null;
@@ -425,7 +425,7 @@ function HackBrowserWindowManager(mainProcessController) {
 		});
 
 		browserPictureDisplayWindow.loadURL("file://" + __app.basePath + "/html-pages/browser-window-picture-display.html");
-		browserPictureDisplayWindow.setAlwaysOnTop(true)
+		browserPictureDisplayWindow.setAlwaysOnTop(true);
 
 		browserPictureDisplayWindow.on('closed', function() {
 			browserPictureDisplayWindow = null;

@@ -92,14 +92,27 @@ function IPCRendererProcessHandler(hackBrowserWindow) {
 		};
 
 		ipcRenderer.send("navigationData", JSON.stringify(sendMsgObj));
-		ipcRenderer.once("navigationDataRecorded", function(e, result) {
-			callback(result);
-		});
 	};
 
-	_this.requestScreenshotUpload = function(tabViewId, url, filePath, callback) {
-		callback = callback || function() {};
+	_this.sendMouseEventData = function(tabViewId, url, eventData) {
+		// add tabViewId and url to mouse event data
+		eventData.tabViewId = tabViewId;
+		eventData.url = url;
 
+		ipcRenderer.send("mouseEventData", JSON.stringify(eventData));
+	};
+
+	_this.sendScrollEventData = function(tabViewId, url) {
+		var sendMsgObj = {
+			tabViewId: tabViewId,
+			url: url,
+			type: "scroll"
+		};
+
+		ipcRenderer.send("scrollEventData", JSON.stringify(sendMsgObj));
+	};
+
+	_this.requestScreenshotUpload = function(tabViewId, url, filePath) {
 		var screenshotDataObj = {
 			tabViewId: tabViewId,
 			url: url,
@@ -107,9 +120,6 @@ function IPCRendererProcessHandler(hackBrowserWindow) {
 		};
 
 		ipcRenderer.send("screenshotUploadRequest", JSON.stringify(screenshotDataObj));
-		ipcRenderer.once("screenshotUploadResponse", function(e, result) {
-			callback(result);
-		});
 	};
 
 	_this.notifyTrackingStatusChange = function(callback) {

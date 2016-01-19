@@ -88,10 +88,22 @@ function IPCMainProcessHandler(mainProcessController) {
 		}
 	};
 
+	/**
+	 * ipc message handler to reposition in-browser picture display window
+	 *
+	 * @param event
+	 * @param arg
+	 */
 	var handleBrowserPictureDisplayWindowReposition = function(event, arg) {
 		mainProcessController.getWindowManager().repositionBrowserPictureDisplayWindow();
 	};
 
+	/**
+	 * ipc message handler for request to open help window
+	 *
+	 * @param event
+	 * @param arg
+	 */
 	var handleHelpWindowOpenRequest = function(event, arg) {
 		mainProcessController.getWindowManager().openHelpWindow();
 
@@ -137,7 +149,7 @@ function IPCMainProcessHandler(mainProcessController) {
 
 		mainProcessController.setIsTrackingOn(isTrackingOn);
 
-		event.sender.send("notifyTrackingStatusChangeConfirm", true);
+		event.sender.send("trackingStatusChangeConfirm", true);
 	};
 
 	init();

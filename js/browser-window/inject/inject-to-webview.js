@@ -14,9 +14,32 @@
 (function() {
 	'use strict';
 
+	var debounce = function(func, wait, immediate) {
+		var timeout;
+		return function() {
+			var context = this, args = arguments;
+			var later = function() {
+				timeout = null;
+				if (!immediate) func.apply(context, args);
+			};
+			var callNow = immediate && !timeout;
+			clearTimeout(timeout);
+			timeout = setTimeout(later, wait);
+			if (callNow) func.apply(context, args);
+		};
+	};
+
+	var handleScrollDebounced = debounce(function(e) {
+		var sendToBrowserWindowObj = {
+			eventType: e.type
+		};
+
+		// send information to TrackBrowserWindow through console
+		console.log(JSON.stringify(sendToBrowserWindowObj));
+	}, 250);
+
 	// extract necessary information from event object
 	var getTargetElementTypeObj = function(e) {
-
 		var returnObj = {};
 
 		returnObj.nodeName = e.srcElement.nodeName;
@@ -100,20 +123,23 @@
 		console.log(JSON.stringify(sendToBrowserWindowObj));
 	};
 
+	// attach event handler for scrolls
+	// debounced wrapper is used to avoid events being fired excessively
+	window.addEventListener("scroll", handleScrollDebounced);
 
-	// Attach an event handler for regular clicks
+	// attach event handler for regular clicks
 	document.addEventListener('click', function(e) {
 		handleMouseEvent(e);
 		console.log(e);
 	}); // END: document.addEventListener('click', function(e) {}
 
-	// Attach an event handler for right clicks
+	// attach event handler for right clicks
 	document.addEventListener('contextmenu', function(e) {
 		handleMouseEvent(e);
 		console.log(e);
 	}); // END: document.addEventListener('contextmenu', function(e) {}
 
-	// Attach event handlers for focus/blur events
+	// attach event handlers for focus/blur events
 	// the third parameter enforces focus/blur events to bubble
 	document.addEventListener('focus', function(e) {
 		handleMouseEvent(e);

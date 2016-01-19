@@ -76,6 +76,14 @@ function ActivityRecorder(mainProcessController) {
 		});
 	};
 
+	_this.recordClickEvent = function(tabViewId, url, eventData) {
+
+	};
+
+	_this.recordScrollEvent = function(tabViewId, url) {
+
+	};
+
 	// TODO: add handling for file downloads
 	_this.recordFileDownload = function(itemData) {
 		itemData = addCommonInfoToPostObj(itemData);

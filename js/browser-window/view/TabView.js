@@ -82,8 +82,13 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 		webViewEl.addEventListener("did-navigate", handleDidNavigate);
 		webViewEl.addEventListener("did-navigate-in-page", handleDidNavigateInPage);
 		webViewEl.addEventListener("console-message", handleConsoleMessage);
+	};
 
 
+	var takeScreenshotAndRequestUpload = function() {
+		hackBrowserWindow.captureActiveWebView(function(imgPath) {
+			hackBrowserWindow.getIPCHandler().requestScreenshotUpload(tabViewId, webViewURL, imgPath, function() {});
+		});
 	};
 
 	var handleLoadCommit = function(e) {
@@ -144,9 +149,7 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 			});
 
 			if (hackBrowserWindow.getActiveTabView() === _this) {
-				hackBrowserWindow.captureActiveWebView(function(imgPath) {
-					hackBrowserWindow.getIPCHandler().requestScreenshotUpload(tabViewId, webViewURL, imgPath, function() {});
-				});
+				takeScreenshotAndRequestUpload();
 			}
 
 			else {
@@ -251,12 +254,18 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 					hackBrowserWindow.getContextMenuHandler().handleWebViewContextMenu(msgObject);
 				}
 
+				else if (msgObject.eventType === "scroll") {
+					takeScreenshotAndRequestUpload();
+				}
+
 				else if ((msgObject.eventType === "focus") && (msgObject.type === "input/password")) {
 					// hackBrowserWindow.setIsTrackingOn(false);
 				}
 
 				else if ((msgObject.eventType === "blur") && (msgObject.type === "input/password")) {
 					// hackBrowserWindow.setIsTrackingOn(true);
+
+
 				}
 			} catch(err) {
 				// console.error(err);
