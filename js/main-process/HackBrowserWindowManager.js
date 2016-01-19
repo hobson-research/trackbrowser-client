@@ -93,6 +93,12 @@ function HackBrowserWindowManager(mainProcessController) {
 		});
 	};
 
+	var attachEventHandlersToBrowserPictureWindow = function(pictureWindow) {
+		pictureWindow.on("move", function(e) {
+			repositionBrowserWindowRelativeToPictureWindow();
+		});
+	};
+
 	/**
 	 * event handler for username check pass result
 	 *
@@ -167,6 +173,19 @@ function HackBrowserWindowManager(mainProcessController) {
 				browserPictureDisplayWindow.hide();
 			}
 		}
+	};
+
+	var repositionBrowserWindowRelativeToPictureWindow = function() {
+		// if either browserWindow or browserPictureDisplayWindow is not open, do nothing
+		if ((browserWindow === null) || (browserPictureDisplayWindow === null)) return;
+
+		var browserWindowBounds = browserWindow.getBounds();
+		var pictureWindowBounds = browserPictureDisplayWindow.getBounds();
+
+		var newXPos = pictureWindowBounds.x - browserWindowBounds.width - 10;
+		var newYPos = pictureWindowBounds.y;
+
+		browserWindow.setPosition(newXPos, newYPos);
 	};
 
 
@@ -411,6 +430,8 @@ function HackBrowserWindowManager(mainProcessController) {
 		browserPictureDisplayWindow.on('closed', function() {
 			browserPictureDisplayWindow = null;
 		});
+
+		attachEventHandlersToBrowserPictureWindow(browserPictureDisplayWindow);
 
 		callback();
 	};
