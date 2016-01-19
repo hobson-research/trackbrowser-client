@@ -23,16 +23,18 @@ function IPCMainProcessHandler(mainProcessController) {
 	var attachEventHandlers = function() {
 		ipcMain.on("userNameRequest", handleUserNameRequest);
 		ipcMain.on("userNameCheck", handleUserNameCheck);
-		ipcMain.on("userPictureURLRequest", handleUserPictureURLRequest);
+		ipcMain.on("userPictureInfoRequest", handleUserPictureInfoRequest);
 		ipcMain.on("userPictureWindowCloseRequest", handleUserPictureWindowCloseRequest);
 		ipcMain.on("dataPathRequest", handleDataPathRequest);
 		ipcMain.on("researchTopicWindowOpenRequest", handleResearchTopicWindowOpenRequest);
 		ipcMain.on("researchTopicWindowCancelRequest", handleResearchTopicWindowCancelRequest);
 		ipcMain.on("researchTopicInput", handleResearchTopicInput);
 		ipcMain.on("userInfoRequest", handleUserInfoRequest);
+		ipcMain.on("browserPictureDisplayWindowReposition", handleBrowserPictureDisplayWindowReposition);
 		ipcMain.on("navigationData", handleNavigationData);
 		ipcMain.on("screenshotUploadRequest", handleScreenshotUploadRequest);
 		ipcMain.on("helpWindowOpenRequest", handleHelpWindowOpenRequest);
+		ipcMain.on("trackingStatusChange", handleTrackingStatusChange);
 	};
 
 	var handleUserNameRequest = function(event, arg) {
@@ -52,8 +54,13 @@ function IPCMainProcessHandler(mainProcessController) {
 		}
 	};
 
-	var handleUserPictureURLRequest = function(event, arg) {
-		event.sender.send("userPictureURLResponse", mainProcessController.getPictureURL());
+	var handleUserPictureInfoRequest = function(event, arg) {
+		console.log("IPCMainProcessHandler.handleUserPictureInfoRequest()");
+		console.log(mainProcessController.getPictureInfo());
+
+		var pictureInfoJSON = JSON.stringify(mainProcessController.getPictureInfo());
+
+		event.sender.send("userPictureInfoResponse", pictureInfoJSON);
 	};
 
 	var handleUserPictureWindowCloseRequest = function(event, arg) {
@@ -79,6 +86,10 @@ function IPCMainProcessHandler(mainProcessController) {
 		} else {
 			mainProcessController.getWindowManager().closeResearchTopicWindow();
 		}
+	};
+
+	var handleBrowserPictureDisplayWindowReposition = function(event, arg) {
+		mainProcessController.getWindowManager().repositionBrowserPictureDisplayWindow();
 	};
 
 	var handleHelpWindowOpenRequest = function(event, arg) {
@@ -118,6 +129,15 @@ function IPCMainProcessHandler(mainProcessController) {
 		var screenshotDataObj = JSON.parse(screenshotDataJSON);
 
 		mainProcessController.getActivityRecorder().uploadScreenshot(screenshotDataObj.tabViewId, screenshotDataObj.url, screenshotDataObj.filePath);
+	};
+
+	var handleTrackingStatusChange = function(event, isTrackingOn) {
+		console.log("IPCMainProcessHandler.handleTrackingStatusChange()");
+		console.log(isTrackingOn);
+
+		mainProcessController.setIsTrackingOn(isTrackingOn);
+
+		event.sender.send("notifyTrackingStatusChangeConfirm", true);
 	};
 
 	init();

@@ -59,6 +59,10 @@ function IPCRendererProcessHandler(hackBrowserWindow) {
 		});
 	};
 
+	_this.requestBrowserPictureDisplayWindowReposition = function() {
+		ipcRenderer.send("browserPictureDisplayWindowReposition", true);
+	};
+
 	_this.requestResearchTopicWindowOpen = function(callback) {
 		console.log("IPCRendererProcessHandler.requestResearchTopicWindowOpen()");
 

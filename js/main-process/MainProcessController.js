@@ -1,138 +1,157 @@
 'use strict';
 
-/**
- * since there can only be one main process at any point,
- * all methods must be static
- */
-function IPCMainProcessHandler(mainProcessController) {
-	const ipcMain = require("electron").ipcMain;
+// import {IPCMainProcessHandler} from "./js/main-process/IPCMainProcessHandler";
+const electron = require("electron");
+const app = electron.app;
+const fs = require("fs");
+const dialog = require("dialog");
+const EventEmitter = require("events").EventEmitter;
+const session = require("electron").session;
+const HackBrowserWindowManager = require(GLOBAL.__app.basePath + "/js/main-process/HackBrowserWindowManager");
+const IPCMainProcessHandler = require(GLOBAL.__app.basePath + "/js/main-process/IPCMainProcessHandler");
+const ActivityRecorder = require(GLOBAL.__app.basePath + "/js/main-process/ActivityRecorder.js");
 
+function MainProcessController() {
 	var _this = this;
 
+	var windowManager;
+	var recorder;
+	var ipcHandler;
 	var mainProcessEventEmitter;
+	var pictureInfo = {
+		url: null,
+		width: 0,
+		height: 0
+	};
 
-	/* ====================================
-	 private methods
-	 ===================================== */
+	var isTrackingOn;
+
+	var participantData = {
+		userName: null,
+		researchType: null,
+		researchTypeKey: null,
+		researchTypeOtherReason: null,
+		researchCompanies: null
+	};
+
 	var init = function() {
-		mainProcessEventEmitter = mainProcessController.getMainProcessEventEmitter();
-
 		attachEventHandlers();
+
+		isTrackingOn = true;
 	};
 
 	var attachEventHandlers = function() {
-		ipcMain.on("userNameRequest", handleUserNameRequest);
-		ipcMain.on("userNameCheck", handleUserNameCheck);
-		ipcMain.on("userPictureInfoRequest", handleUserPictureInfoRequest);
-		ipcMain.on("userPictureWindowCloseRequest", handleUserPictureWindowCloseRequest);
-		ipcMain.on("dataPathRequest", handleDataPathRequest);
-		ipcMain.on("researchTopicWindowOpenRequest", handleResearchTopicWindowOpenRequest);
-		ipcMain.on("researchTopicWindowCancelRequest", handleResearchTopicWindowCancelRequest);
-		ipcMain.on("researchTopicInput", handleResearchTopicInput);
-		ipcMain.on("userInfoRequest", handleUserInfoRequest);
-		ipcMain.on("navigationData", handleNavigationData);
-		ipcMain.on("screenshotUploadRequest", handleScreenshotUploadRequest);
-		ipcMain.on("helpWindowOpenRequest", handleHelpWindowOpenRequest);
-		ipcMain.on("trackingStatusChange", handleTrackingStatusChange);
-	};
+		app.on("window-all-closed", function() {
+			console.log("window-all-closed, quitting");
 
-	var handleUserNameRequest = function(event, arg) {
-		event.sender.send("userNameResponse", mainProcessController.getParticipantUserName());
-	};
+			if (process.platform != "darwin") {
+				console.log("quitting app");
 
-	var handleUserNameCheck = function(event, arg) {
-		var userName = arg;
+				app.quit();
+			}
+		});
 
-		// TODO: check username check logic
-
-		if (true) {
-			event.sender.send("userNameCheckResult", true);
-			mainProcessEventEmitter.emit("userNameCheckPass", userName);
-		} else {
-			event.sender.send("userNameCheckResult", false);
-		}
-	};
-
-	var handleUserPictureInfoRequest = function(event, arg) {
-		var pictureInfoJSON = JSON.stringify(mainProcessController.getPictureInfo());
-
-		event.sender.send("userPictureInfoResponse", pictureInfoJSON);
-	};
-
-	var handleUserPictureWindowCloseRequest = function(event, arg) {
-		event.sender.send("userPictureWindowCloseResponse", true);
-		mainProcessEventEmitter.emit("userPictureWindowCloseRequest", true);
-	};
-
-	var handleDataPathRequest = function(event, arg) {
-		event.sender.send("dataPathResponse", GLOBAL.__app.dataPath);
-	};
-
-	var handleResearchTopicWindowOpenRequest = function(event, arg) {
-		mainProcessController.getWindowManager().openResearchTopicWindow();
-
-		event.sender.send("researchTopicWindowOpenResponse", true);
-	};
-
-	var handleResearchTopicWindowCancelRequest = function(event, isNewSession) {
-		if (isNewSession === true) {
-			mainProcessController.getWindowManager().openLoginWindow(function() {
-				mainProcessController.getWindowManager().closeResearchTopicWindow();
+		app.on("ready", function() {
+			session.defaultSession.on("will-download", function(event, item, webContents) {
+				console.log(item);
 			});
-		} else {
-			mainProcessController.getWindowManager().closeResearchTopicWindow();
-		}
+
+			// check if .data directory exists
+			fs.exists(GLOBAL.__app.dataPath, function(exists) {
+				if (exists === false) {
+					// create directory if .data directory doesn't exist
+					// TODO: check directory create permissions on Linux
+					fs.mkdir(GLOBAL.__app.dataPath, function(err) {
+						if (err) {
+							// TODO: show error messagebox and quit app
+							dialog.showMessageBox({
+								type: "info",
+								buttons: ["ok"],
+								title: GLOBAL.__app.dataPath,
+								message: JSON.stringify(err),
+								detail: JSON.stringify(err)
+							});
+						} else {
+							startBrowser();
+						}
+					});
+				} else {
+					startBrowser();
+				}
+			});
+		});
 	};
 
-	var handleHelpWindowOpenRequest = function(event, arg) {
-		mainProcessController.getWindowManager().openHelpWindow();
+	var startBrowser = function() {
+		// create a shared EventEmitter for windowManager to communicate with ipcHandler
+		mainProcessEventEmitter = new EventEmitter();
 
-		event.sender.send("helpWindowOpenResponse", true);
+		windowManager = new HackBrowserWindowManager(_this);
+		recorder = new ActivityRecorder(_this);
+		ipcHandler = new IPCMainProcessHandler(_this);
+
+		recorder.checkServerAlive(
+			function(err) {
+				dialog.showErrorBox('Server Not Responding', 'Server is not responding. ');
+
+				app.quit();
+			},
+			function(response) {
+				if (response.statusCode === 200) {
+					windowManager.openLoginWindow();
+				}
+			}
+		);
 	};
 
-	var handleResearchTopicInput = function(event, arg) {
-		var msgObj;
-
-		try {
-			msgObj = JSON.parse(arg);
-
-			event.sender.send("researchTopicUpdated", true);
-			mainProcessEventEmitter.emit("researchTopicInputComplete", msgObj);
-
-			mainProcessController.getWindowManager().getBrowserWindow().webContents.executeJavaScript("hackBrowserWindow.getUserInfoBar().syncUserInfoFromMainProcess()");
-		} catch (err) {
-			console.log("Error parsing research topic input IPC message (invalid JSON format)");
-
-			event.sender.send("researchTopicUpdated", false);
-		}
+	_this.start = function() {
+		init();
 	};
 
-	var handleUserInfoRequest = function(event, arg) {
-		event.sender.send("userInfoResponse", JSON.stringify(mainProcessController.getParticipantData()));
+	_this.getMainProcessEventEmitter = function() {
+		return mainProcessEventEmitter;
 	};
 
-	var handleNavigationData = function(event, arg) {
-		var navigationDataObj = JSON.parse(arg);
-
-		mainProcessController.getActivityRecorder().recordNavigation(navigationDataObj.tabViewId, navigationDataObj.url);
+	_this.setParticipantDataItem = function(key, value) {
+		participantData[key] = value;
 	};
 
-	var handleScreenshotUploadRequest = function(event, screenshotDataJSON) {
-		var screenshotDataObj = JSON.parse(screenshotDataJSON);
-
-		mainProcessController.getActivityRecorder().uploadScreenshot(screenshotDataObj.tabViewId, screenshotDataObj.url, screenshotDataObj.filePath);
+	_this.getParticipantUserName = function() {
+		return participantData.userName;
 	};
 
-	var handleTrackingStatusChange = function(event, isTrackingOn) {
-		console.log("IPCMainProcessHandler.handleTrackingStatusChange()");
-		console.log(isTrackingOn);
-
-		mainProcessController.setIsTrackingOn(isTrackingOn);
-
-		event.sender.send("notifyTrackingStatusChangeConfirm", true);
+	/**
+	 * get participant's data (username, research type, companies, etc)
+	 *
+	 * @returns {object}
+	 */
+	_this.getParticipantData = function() {
+		return participantData;
 	};
 
-	init();
+	_this.getActivityRecorder = function() {
+		return recorder;
+	};
+
+	_this.getWindowManager = function() {
+		return windowManager;
+	};
+
+	_this.getPictureInfo = function() {
+		return pictureInfo;
+	};
+
+	_this.setPictureInfo = function(newPictureInfo) {
+		pictureInfo = newPictureInfo;
+	};
+
+	_this.getIsTrackingOn = function() {
+		return isTrackingOn;
+	};
+
+	_this.setIsTrackingOn = function(isOn) {
+		isTrackingOn = isOn;
+	};
 }
 
-module.exports = IPCMainProcessHandler;
+module.exports = MainProcessController;

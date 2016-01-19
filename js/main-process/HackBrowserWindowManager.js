@@ -47,15 +47,17 @@ function HackBrowserWindowManager(mainProcessController) {
 		var windowId = browserWindow.id;
 
 		browserWindow.on("move", function(e) {
-			repositionBrowserPictureDisplayWindow();
+			_this.repositionBrowserPictureDisplayWindow();
 		});
 
 		browserWindow.on("resize", function(e) {
-			repositionBrowserPictureDisplayWindow();
+			_this.repositionBrowserPictureDisplayWindow();
 		});
 
 		browserWindow.on("blur", function(e) {
-			setBrowserPictureDisplayWindowVisibility(false);
+			setTimeout(function() {
+				setBrowserPictureDisplayWindowVisibility(false);
+			}, 50);
 		});
 
 		browserWindow.on("focus", function(e) {
@@ -108,6 +110,8 @@ function HackBrowserWindowManager(mainProcessController) {
 				dialog.showErrorBox('Error retrieving picture URL', 'Server is not responding. ');
 			},
 			function(imageInfoObj) {
+				console.log("HackBrowserWindowManager.handleUserNameCheckPass()");
+				console.log(imageInfoObj);
 				mainProcessController.setPictureInfo(imageInfoObj);
 
 				// _this.openResearchTopicWindow();
@@ -152,19 +156,6 @@ function HackBrowserWindowManager(mainProcessController) {
 		}
 	};
 
-
-	var repositionBrowserPictureDisplayWindow = function() {
-		// if either browserWindow or browserPictureDisplayWindow is not open, do nothing
-		if ((browserWindow === null) || (browserPictureDisplayWindow === null)) return;
-
-		var browserWindowBounds = browserWindow.getBounds();
-
-		var newXPos = browserWindowBounds.x + browserWindowBounds.width + 10;
-		var newYPos = browserWindowBounds.y;
-
-		browserPictureDisplayWindow.setPosition(newXPos, newYPos);
-	};
-
 	var setBrowserPictureDisplayWindowVisibility = function(isVisible) {
 		// if either browserWindow or browserPictureDisplayWindow is not open, do nothing
 		if ((browserWindow === null) || (browserPictureDisplayWindow === null)) return;
@@ -172,7 +163,9 @@ function HackBrowserWindowManager(mainProcessController) {
 		if (isVisible === true) {
 			browserPictureDisplayWindow.showInactive();
 		} else {
-			browserPictureDisplayWindow.hide();
+			if (browserPictureDisplayWindow.isFocused() === false) {
+				browserPictureDisplayWindow.hide();
+			}
 		}
 	};
 
@@ -263,6 +256,8 @@ function HackBrowserWindowManager(mainProcessController) {
 		});
 
 		pictureDisplayWindow.loadURL("file://" + __app.basePath + "/html-pages/picture-display.html");
+
+		pictureDisplayWindow.openDevTools();
 
 		pictureDisplayWindow.on('closed', function() {
 			pictureDisplayWindow = null;
@@ -411,6 +406,7 @@ function HackBrowserWindowManager(mainProcessController) {
 		});
 
 		browserPictureDisplayWindow.loadURL("file://" + __app.basePath + "/html-pages/browser-window-picture-display.html");
+		browserPictureDisplayWindow.setAlwaysOnTop(true)
 
 		browserPictureDisplayWindow.on('closed', function() {
 			browserPictureDisplayWindow = null;
@@ -431,6 +427,18 @@ function HackBrowserWindowManager(mainProcessController) {
 		browserPictureDisplayWindow.close();
 
 		callback();
+	};
+
+	_this.repositionBrowserPictureDisplayWindow = function() {
+		// if either browserWindow or browserPictureDisplayWindow is not open, do nothing
+		if ((browserWindow === null) || (browserPictureDisplayWindow === null)) return;
+
+		var browserWindowBounds = browserWindow.getBounds();
+
+		var newXPos = browserWindowBounds.x + browserWindowBounds.width + 10;
+		var newYPos = browserWindowBounds.y;
+
+		browserPictureDisplayWindow.setPosition(newXPos, newYPos);
 	};
 
 	/**
