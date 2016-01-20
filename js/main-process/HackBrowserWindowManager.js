@@ -216,6 +216,8 @@ function HackBrowserWindowManager(mainProcessController) {
 
 		loginWindow.loadURL("file://" + __app.basePath + "/html-pages/login.html");
 
+		// loginWindow.openDevTools();
+
 		loginWindow.on('closed', function() {
 			loginWindow = null;
 		});
