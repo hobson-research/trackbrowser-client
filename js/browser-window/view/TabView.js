@@ -255,6 +255,7 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 				}
 
 				else if (msgObject.eventType === "scroll") {
+					hackBrowserWindow.getIPCHandler().sendScrollEventData(tabViewId, webViewURL);
 					takeScreenshotAndRequestUpload();
 				}
 

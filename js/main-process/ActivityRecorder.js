@@ -81,7 +81,18 @@ function ActivityRecorder(mainProcessController) {
 	};
 
 	_this.recordScrollEvent = function(tabViewId, url) {
+		var scrollData = {
+			type: "scroll",
+			tabViewId: tabViewId,
+			url: url
+		};
 
+		scrollData = addCommonInfoToPostObj(scrollData);
+
+		request.post({
+			url: tbServerHost + ":" + tbServerPort + "/api/v1/scroll",
+			formData: scrollData
+		});
 	};
 
 	// TODO: add handling for file downloads

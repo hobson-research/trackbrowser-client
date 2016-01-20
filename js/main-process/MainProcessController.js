@@ -15,7 +15,7 @@ function MainProcessController() {
 	var _this = this;
 
 	var windowManager;
-	var recorder;
+	var activityRecorder;
 	var ipcHandler;
 	var mainProcessEventEmitter;
 	var pictureInfo = {
@@ -23,7 +23,6 @@ function MainProcessController() {
 		width: 0,
 		height: 0
 	};
-
 	var isTrackingOn;
 
 	var participantData = {
@@ -35,9 +34,9 @@ function MainProcessController() {
 	};
 
 	var init = function() {
-		attachEventHandlers();
-
 		isTrackingOn = true;
+
+		attachEventHandlers();
 	};
 
 	var attachEventHandlers = function() {
@@ -52,9 +51,7 @@ function MainProcessController() {
 		});
 
 		app.on("ready", function() {
-			session.defaultSession.on("will-download", function(event, item, webContents) {
-				console.log(item);
-			});
+			session.defaultSession.on("will-download", handleWillDownload);
 
 			// check if .data directory exists
 			fs.exists(GLOBAL.__app.dataPath, function(exists) {
@@ -87,10 +84,10 @@ function MainProcessController() {
 		mainProcessEventEmitter = new EventEmitter();
 
 		windowManager = new HackBrowserWindowManager(_this);
-		recorder = new ActivityRecorder(_this);
+		activityRecorder = new ActivityRecorder(_this);
 		ipcHandler = new IPCMainProcessHandler(_this);
 
-		recorder.checkServerAlive(
+		activityRecorder.checkServerAlive(
 			function(err) {
 				dialog.showErrorBox('Server Not Responding', 'Server is not responding. ');
 
@@ -102,6 +99,27 @@ function MainProcessController() {
 				}
 			}
 		);
+	};
+
+	var handleWillDownload = function(event, item, webContents) {
+		item.on("done", function(e, state) {
+			// if tracking mode is turned off, do nothing
+			if (isTrackingOn === false) {
+				return;
+			}
+
+			if (state === "completed") {
+				var itemInfoObj = {
+					type: "file-download",
+					fileSize: item.getTotalBytes(),
+					fileURL: item.getURL(),
+					fileName: item.getFilename(),
+					fileMimeType: item.getMimeType()
+				};
+
+				activityRecorder.recordFileDownload(itemInfoObj);
+			}
+		});
 	};
 
 	_this.start = function() {
@@ -130,7 +148,7 @@ function MainProcessController() {
 	};
 
 	_this.getActivityRecorder = function() {
-		return recorder;
+		return activityRecorder;
 	};
 
 	_this.getWindowManager = function() {
@@ -141,8 +159,8 @@ function MainProcessController() {
 		return pictureInfo;
 	};
 
-	_this.setPictureInfo = function(newPictureInfo) {
-		pictureInfo = newPictureInfo;
+	_this.setPictureInfo = function(pictureInfoObj) {
+		pictureInfo = pictureInfoObj;
 	};
 
 	_this.getIsTrackingOn = function() {

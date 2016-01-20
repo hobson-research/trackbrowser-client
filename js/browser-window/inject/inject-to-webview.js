@@ -36,7 +36,7 @@
 
 		// send information to TrackBrowserWindow through console
 		console.log(JSON.stringify(sendToBrowserWindowObj));
-	}, 250);
+	}, 500);
 
 	// extract necessary information from event object
 	var getTargetElementTypeObj = function(e) {

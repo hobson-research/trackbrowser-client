@@ -32,6 +32,7 @@ function IPCMainProcessHandler(mainProcessController) {
 		ipcMain.on("userInfoRequest", handleUserInfoRequest);
 		ipcMain.on("browserPictureDisplayWindowReposition", handleBrowserPictureDisplayWindowReposition);
 		ipcMain.on("navigationData", handleNavigationData);
+		ipcMain.on("scrollEventData", handleEventScrollData);
 		ipcMain.on("screenshotUploadRequest", handleScreenshotUploadRequest);
 		ipcMain.on("helpWindowOpenRequest", handleHelpWindowOpenRequest);
 		ipcMain.on("trackingStatusChange", handleTrackingStatusChange);
@@ -127,26 +128,54 @@ function IPCMainProcessHandler(mainProcessController) {
 		}
 	};
 
+	/**
+	 * ipc handler to record user's research topic information
+	 *
+	 * @param event
+	 * @param arg
+	 */
 	var handleUserInfoRequest = function(event, arg) {
 		event.sender.send("userInfoResponse", JSON.stringify(mainProcessController.getParticipantData()));
 	};
 
-	var handleNavigationData = function(event, arg) {
-		var navigationDataObj = JSON.parse(arg);
+	/**
+	 * ipc handler to record navigation data
+	 *
+	 * @param event
+	 * @param navigationDataJSON
+	 */
+	var handleNavigationData = function(event, navigationDataJSON) {
+		var navigationDataObj = JSON.parse(navigationDataJSON);
 
 		mainProcessController.getActivityRecorder().recordNavigation(navigationDataObj.tabViewId, navigationDataObj.url);
 	};
 
+
+	var handleEventScrollData = function(event, scrollDataJSON) {
+		var scrollDataObj = JSON.parse(scrollDataJSON);
+
+		mainProcessController.getActivityRecorder().recordScrollEvent(scrollDataObj.tabViewId, scrollDataObj.url);
+	};
+
+	/**
+	 * ipc message handler for uploading screenshots
+	 *
+	 * @param event
+	 * @param screenshotDataJSON
+	 */
 	var handleScreenshotUploadRequest = function(event, screenshotDataJSON) {
 		var screenshotDataObj = JSON.parse(screenshotDataJSON);
 
 		mainProcessController.getActivityRecorder().uploadScreenshot(screenshotDataObj.tabViewId, screenshotDataObj.url, screenshotDataObj.filePath);
 	};
 
+	/**
+	 * ipc handler to turn on/off tracking status
+	 *
+	 * @param event
+	 * @param isTrackingOn
+	 */
 	var handleTrackingStatusChange = function(event, isTrackingOn) {
-		console.log("IPCMainProcessHandler.handleTrackingStatusChange()");
-		console.log(isTrackingOn);
-
 		mainProcessController.setIsTrackingOn(isTrackingOn);
 
 		event.sender.send("trackingStatusChangeConfirm", true);

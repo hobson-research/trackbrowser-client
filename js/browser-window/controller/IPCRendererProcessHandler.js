@@ -105,8 +105,7 @@ function IPCRendererProcessHandler(hackBrowserWindow) {
 	_this.sendScrollEventData = function(tabViewId, url) {
 		var sendMsgObj = {
 			tabViewId: tabViewId,
-			url: url,
-			type: "scroll"
+			url: url
 		};
 
 		ipcRenderer.send("scrollEventData", JSON.stringify(sendMsgObj));
