@@ -76,6 +76,9 @@ function ActivityRecorder(mainProcessController) {
 		});
 	};
 
+	// currently, click events are not posted to server
+	// there is no way to differentiate meaningful and meaningless clicks
+	// instead, screenshots are sent to server when a navigation is done
 	_this.recordClickEvent = function(tabViewId, url, eventData) {
 
 	};
@@ -95,7 +98,6 @@ function ActivityRecorder(mainProcessController) {
 		});
 	};
 
-	// TODO: add handling for file downloads
 	_this.recordFileDownload = function(itemData) {
 		itemData = addCommonInfoToPostObj(itemData);
 
