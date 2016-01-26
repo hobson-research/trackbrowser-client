@@ -1,15 +1,114 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Help Page</title>
+	<title>Track Browser</title>
 
 	<link rel="stylesheet" href="css/cssreset-min.css">
-	<link rel="stylesheet" href="css/help.css">
+	<link href='https://fonts.googleapis.com/css?family=Roboto:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
+
+	<style>
+		html {
+			background: #fff;
+			height: 100%;
+		}
+
+		body {
+			color: #333;
+			font-size: 17px;
+			line-height: 32px;
+			font-family: 'Roboto', "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+			font-weight: 400;
+			-webkit-font-smoothing: antialiased;
+			/* Fix for webkit rendering */
+			-webkit-text-size-adjust: 100%;
+			-webkit-app-region: drag;
+			position: relative;
+			height: 100%;
+		}
+
+		#help-wrapper {
+			padding: 40px 50px;
+			position: relative;
+			height: 100%;
+			box-sizing: border-box;
+		}
+
+		/* Links */
+		a {
+			color: #222;
+			text-decoration: none;
+			outline: 0;
+		}
+
+		a:hover,
+		a:focus {
+			color: #555;
+		}
+
+		h1 {
+			color: #9d60d8;
+			font-size: 16px;
+			line-height: 16px;
+			font-weight: bold;
+			padding-bottom: 25px;
+		}
+
+		#link-close-wrapper {
+			position: absolute;
+			left: 0px;
+			bottom: 0px;
+			width: 100%;
+		}
+
+			a#link-close {
+				color: #aaa;
+				display: block;
+				font-weight: bold;
+				text-align: center;
+				padding: 22px 30px;
+				border: 1px solid #aaa;
+				cursor: pointer;
+				-webkit-app-region: no-drag;
+				border-radius: 10px;
+				margin: 10px;
+			}
+
+				a#link-close:hover {
+					color: #444;
+					border-color: #444;
+				}
+
+
+	</style>
 
 	<script>
+		const remote = require('remote');
+
+		(function() {
+			'use strict';
+
+			var closeBtnEl;
+
+			document.addEventListener("DOMContentLoaded", function() {
+				closeBtnEl = document.getElementById("link-close");
+
+				closeBtnEl.addEventListener("click", function(e) {
+					remote.getCurrentWindow().close();
+
+					e.preventDefault();
+				});
+			});
+		})();
 	</script>
 </head>
 <body id="body-help">
-help page
+<div id="help-wrapper">
+	<h1>Help</h1>
+	<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quam dui, sodales nec nibh id, malesuada condimentum erat. Morbi sodales leo vitae mi posuere volutpat. Suspendisse molestie augue tortor, sit amet scelerisque purus facilisis id. Quisque nulla lectus, hendrerit ut aliquet vitae, varius nec lorem. Fusce blandit consequat mattis. Cras nec mauris ligula. Proin molestie libero sem, sed finibus orci feugiat ac. Etiam in augue ornare, malesuada dui non, varius nibh. Etiam leo velit, facilisis a luctus a, mollis non risus. Sed sollicitudin turpis non purus ultricies accumsan.</p>
+
+	<div id="link-close-wrapper">
+		<a id="link-close">Close</a>
+	</div>
+</div><!-- // #help-wrapper -->
 </body>
 </html>

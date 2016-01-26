@@ -59,10 +59,6 @@ function IPCRendererProcessHandler(hackBrowserWindow) {
 		});
 	};
 
-	_this.requestBrowserPictureDisplayWindowReposition = function() {
-		ipcRenderer.send("browserPictureDisplayWindowReposition", true);
-	};
-
 	_this.requestResearchTopicWindowOpen = function(callback) {
 		console.log("IPCRendererProcessHandler.requestResearchTopicWindowOpen()");
 
@@ -81,6 +77,15 @@ function IPCRendererProcessHandler(hackBrowserWindow) {
 
 		ipcRenderer.send("helpWindowOpenRequest", true);
 		ipcRenderer.once("helpWindowOpenResponse", function(e, result) {
+			callback(result);
+		});
+	};
+
+	_this.requestPictureDisplayOpen = function(callback) {
+		callback = callback || function() {};
+
+		ipcRenderer.send("pictureDisplayOpenRequest", true);
+		ipcRenderer.once("pictureDisplayOpenResponse", function(e, result) {
 			callback(result);
 		});
 	};

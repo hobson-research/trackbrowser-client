@@ -53,7 +53,7 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 		webViewEl.setAttribute("disablewebsecurity", "");
 
 		if (url === null) {
-			_this.navigateTo("./new-tab.html");
+			_this.navigateTo("http://www.google.com/");
 		} else {
 			_this.navigateTo(url);
 		}

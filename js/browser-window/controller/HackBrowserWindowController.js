@@ -59,8 +59,6 @@ function HackBrowserWindowController() {
 			userName = userInfoObj.userName;
 		});
 
-		ipcHandler.requestBrowserPictureDisplayWindowReposition();
-
 		// retrieve data path from main process
 		dataPath = null;
 

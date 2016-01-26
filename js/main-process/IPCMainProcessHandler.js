@@ -30,11 +30,12 @@ function IPCMainProcessHandler(mainProcessController) {
 		ipcMain.on("researchTopicWindowCancelRequest", handleResearchTopicWindowCancelRequest);
 		ipcMain.on("researchTopicInput", handleResearchTopicInput);
 		ipcMain.on("userInfoRequest", handleUserInfoRequest);
-		ipcMain.on("browserPictureDisplayWindowReposition", handleBrowserPictureDisplayWindowReposition);
 		ipcMain.on("navigationData", handleNavigationData);
 		ipcMain.on("scrollEventData", handleEventScrollData);
 		ipcMain.on("screenshotUploadRequest", handleScreenshotUploadRequest);
 		ipcMain.on("helpWindowOpenRequest", handleHelpWindowOpenRequest);
+		ipcMain.on("pictureDisplayOpenRequest", handlePictureDisplayOpenRequest);
+		ipcMain.on("pictureDisplayCloseRequest", handlePictureDisplayCloseRequest);
 		ipcMain.on("trackingStatusChange", handleTrackingStatusChange);
 	};
 
@@ -90,16 +91,6 @@ function IPCMainProcessHandler(mainProcessController) {
 	};
 
 	/**
-	 * ipc message handler to reposition in-browser picture display window
-	 *
-	 * @param event
-	 * @param arg
-	 */
-	var handleBrowserPictureDisplayWindowReposition = function(event, arg) {
-		mainProcessController.getWindowManager().repositionBrowserPictureDisplayWindow();
-	};
-
-	/**
 	 * ipc message handler for request to open help window
 	 *
 	 * @param event
@@ -110,6 +101,19 @@ function IPCMainProcessHandler(mainProcessController) {
 
 		event.sender.send("helpWindowOpenResponse", true);
 	};
+
+	var handlePictureDisplayOpenRequest = function(event, arg) {
+		mainProcessController.getWindowManager().openPictureDisplayWindow();
+
+		event.sender.send("pictureDisplayOpenResponse", true);
+	};
+
+	var handlePictureDisplayCloseRequest = function(event, arg) {
+		mainProcessController.getWindowManager().closePictureDisplayWindow();
+
+		event.sender.send("pictureDisplayCloseResponse", true);
+	};
+
 
 	var handleResearchTopicInput = function(event, arg) {
 		var msgObj;

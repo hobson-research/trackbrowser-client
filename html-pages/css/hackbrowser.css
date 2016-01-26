@@ -253,17 +253,17 @@ input#address-bar {
 
 .box#box-user-name {
 	left: 0;
-	width: 120px;
+	width: 110px;
 }
 
 .box#box-research-type {
-	left: 120px;
-	width: 200px;
+	left: 110px;
+	width: 190px;
 }
 
 .box#box-companies {
-	left: 320px;
-	width: 200px;
+	left: 300px;
+	width: 180px;
 }
 
 	.box#box-research-type:hover,
@@ -272,12 +272,12 @@ input#address-bar {
 
 .box#box-link-help {
 	color: #fff;
-	left: 520px;
-	width: 180px;
+	left: 480px;
+	width: 170px;
 }
 
 	.box#box-link-help-status p.info {
-		width: 150px;
+		width: 120px;
 	}
 
 	.box#box-link-help i {
@@ -287,6 +287,13 @@ input#address-bar {
 		font-size: 20px;
 		line-height: 20px;
 	}
+
+.box#box-link-picture-display {
+	color: #fff;
+	left: 650px;
+	width: 150px;
+	border-right: none;
+}
 
 .box#box-tracking-status {
 	background: #000;

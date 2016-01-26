@@ -46,24 +46,6 @@ function HackBrowserWindowManager(mainProcessController) {
 	var attachEventHandlersToBrowserWindow = function(browserWindow) {
 		var windowId = browserWindow.id;
 
-		browserWindow.on("move", function(e) {
-			_this.repositionBrowserPictureDisplayWindow();
-		});
-
-		browserWindow.on("resize", function(e) {
-			_this.repositionBrowserPictureDisplayWindow();
-		});
-
-		browserWindow.on("blur", function(e) {
-			setTimeout(function() {
-				setBrowserPictureDisplayWindowVisibility(false);
-			}, 50);
-		});
-
-		browserWindow.on("focus", function(e) {
-			setBrowserPictureDisplayWindowVisibility(true);
-		});
-
 		// save browser window's width/height when user closes it
 		browserWindow.on("close", function(e) {
 			var size = browserWindow.getSize();
@@ -76,9 +58,6 @@ function HackBrowserWindowManager(mainProcessController) {
 			// save to persistent storage
 			PersistentStorage.setItem("browserWindowSize", sizeObject);
 
-			// also close in-browser picture display
-			_this.closeBrowserPictureDisplayWindow();
-
 			e.returnValue = false;
 		});
 
@@ -90,12 +69,6 @@ function HackBrowserWindowManager(mainProcessController) {
 				delete browserWindowList[windowId];
 				browserWindow = null;
 			}
-		});
-	};
-
-	var attachEventHandlersToBrowserPictureWindow = function(pictureWindow) {
-		pictureWindow.on("move", function(e) {
-			repositionBrowserWindowRelativeToPictureWindow();
 		});
 	};
 
@@ -131,7 +104,10 @@ function HackBrowserWindowManager(mainProcessController) {
 	 * close "picture display" window and open research topic input window
 	 */
 	var handleUserPictureWindowCloseRequest= function() {
-		_this.openResearchTopicWindow();
+		if (browserWindow === null) {
+			_this.openResearchTopicWindow();
+		}
+
 		_this.closePictureDisplayWindow();
 	};
 
@@ -173,19 +149,6 @@ function HackBrowserWindowManager(mainProcessController) {
 				browserPictureDisplayWindow.hide();
 			}
 		}
-	};
-
-	var repositionBrowserWindowRelativeToPictureWindow = function() {
-		// if either browserWindow or browserPictureDisplayWindow is not open, do nothing
-		if ((browserWindow === null) || (browserPictureDisplayWindow === null)) return;
-
-		var browserWindowBounds = browserWindow.getBounds();
-		var pictureWindowBounds = browserPictureDisplayWindow.getBounds();
-
-		var newXPos = pictureWindowBounds.x - browserWindowBounds.width - 10;
-		var newYPos = pictureWindowBounds.y;
-
-		browserWindow.setPosition(newXPos, newYPos);
 	};
 
 
@@ -378,90 +341,13 @@ function HackBrowserWindowManager(mainProcessController) {
 			browserWindowList[browserWindow.id] = browserWindow;
 			attachEventHandlersToBrowserWindow(browserWindow);
 
-			_this.openBrowserPictureDisplayWindow();
+			// _this.openBrowserPictureDisplayWindow();
 
 			// increase window count
 			createdWindowCount++;
 
 			callback();
 		});
-	};
-
-	/**
-	 * open in-browser "picture display" window
-	 *
-	 * @param callback
-	 */
-	_this.openBrowserPictureDisplayWindow = function(callback) {
-		callback = callback || function() {};
-
-		console.log("HackBrowserWindowManager.openBrowserPictureDisplayWindow()");
-
-		// if browser picture display window is already open,
-		// do nothing
-		if (browserPictureDisplayWindow !== null) {
-			return;
-		}
-
-		var pictureInfo = mainProcessController.getPictureInfo();
-
-		// make max window width small
-		var windowWidth = 250;
-
-		// if the image's width is smaller than default window width,
-		// fit the window's width to image width
-		if (windowWidth > pictureInfo.width) {
-			windowWidth = pictureInfo.width;
-		}
-
-		// calculate width/height ratio
-		var widthHeightRatio = pictureInfo.width / pictureInfo.height;
-		var windowHeight = Math.ceil(windowWidth * (1 / widthHeightRatio));
-
-		// create the picture display window
-		browserPictureDisplayWindow = new BrowserWindow({
-			width: windowWidth,
-			height: windowHeight,
-			resizable: false,
-			frame: false
-		});
-
-		browserPictureDisplayWindow.loadURL("file://" + __app.basePath + "/html-pages/browser-window-picture-display.html");
-		browserPictureDisplayWindow.setAlwaysOnTop(true);
-
-		browserPictureDisplayWindow.on('closed', function() {
-			browserPictureDisplayWindow = null;
-		});
-
-		attachEventHandlersToBrowserPictureWindow(browserPictureDisplayWindow);
-
-		callback();
-	};
-
-	/**
-	 * close in-browser "picture display" window
-	 *
-	 * @param callback
-	 */
-	_this.closeBrowserPictureDisplayWindow = function(callback) {
-		callback = callback || function() {};
-
-		// close login window
-		browserPictureDisplayWindow.close();
-
-		callback();
-	};
-
-	_this.repositionBrowserPictureDisplayWindow = function() {
-		// if either browserWindow or browserPictureDisplayWindow is not open, do nothing
-		if ((browserWindow === null) || (browserPictureDisplayWindow === null)) return;
-
-		var browserWindowBounds = browserWindow.getBounds();
-
-		var newXPos = browserWindowBounds.x + browserWindowBounds.width + 10;
-		var newYPos = browserWindowBounds.y;
-
-		browserPictureDisplayWindow.setPosition(newXPos, newYPos);
 	};
 
 	/**

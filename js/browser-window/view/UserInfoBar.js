@@ -20,6 +20,7 @@ function UserInfoBar(hackBrowserWindow) {
 	var companiesBoxEl;
 	var companiesTextEl;
 	var helpBoxEl;
+	var pictureDisplayBoxEl;
 	var trackingStatusBoxEl;
 	var trackingStatusTextEl;
 	var trackingStatusSwitchWrapperEl;
@@ -37,6 +38,7 @@ function UserInfoBar(hackBrowserWindow) {
 		companiesBoxEl = document.getElementById("box-companies");
 		companiesTextEl = companiesBoxEl.querySelector("p.info");
 		helpBoxEl = document.getElementById("box-link-help");
+		pictureDisplayBoxEl = document.getElementById("box-link-picture-display");
 		trackingStatusBoxEl = document.getElementById("box-tracking-status");
 		trackingStatusTextEl = trackingStatusBoxEl.querySelector("p.info");
 		trackingStatusSwitchWrapperEl = document.getElementById("tracking-switch-wrapper");
@@ -53,6 +55,7 @@ function UserInfoBar(hackBrowserWindow) {
 		companiesBoxEl.addEventListener("click", handleCompaniesBoxClick);
 		trackingStatusBoxEl.addEventListener("click", handleTrackingStatusBoxClick);
 		helpBoxEl.addEventListener("click", handleHelpBoxClick);
+		pictureDisplayBoxEl.addEventListener("click", handlePictureDisplayBoxClick);
 	};
 
 	var handleResearchTypeBoxClick = function(e) {
@@ -75,6 +78,12 @@ function UserInfoBar(hackBrowserWindow) {
 
 	var handleHelpBoxClick = function(e) {
 		hackBrowserWindow.getIPCHandler().requestHelpWindowOpen();
+
+		e.preventDefault();
+	};
+
+	var handlePictureDisplayBoxClick = function(e) {
+		hackBrowserWindow.getIPCHandler().requestPictureDisplayOpen();
 
 		e.preventDefault();
 	};
