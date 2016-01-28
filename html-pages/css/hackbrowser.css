@@ -223,7 +223,7 @@ input#address-bar {
 	position: absolute;
 	top: 0;
 	box-sizing: border-box;
-	border-right: 1px solid #222;
+	border-right: 1px solid #666;
 	overflow: visible;
 }
 
@@ -261,13 +261,13 @@ input#address-bar {
 	width: 190px;
 }
 
-.box#box-companies {
+.box#box-company {
 	left: 300px;
 	width: 180px;
 }
 
 	.box#box-research-type:hover,
-	.box#box-companies:hover {
+	.box#box-company:hover {
 	}
 
 .box#box-link-help {
@@ -300,7 +300,7 @@ input#address-bar {
 	right: 0;
 	width: 180px;
 	border-right: none;
-	border-left: 1px solid #333;
+	border-left: 1px solid #666;
 	z-index: 40;
 }
 
@@ -311,6 +311,24 @@ input#address-bar {
 	.box#box-tracking-status:hover {
 
 	}
+
+/*
+http://stackoverflow.com/questions/16344354/how-to-make-blinking-flashing-text-with-css3
+*/
+.blink {
+	animation: blink 1s steps(5, start) infinite;
+	-webkit-animation: blink 1s steps(5, start) infinite;
+}
+@keyframes blink {
+	to {
+		visibility: hidden;
+	}
+}
+@-webkit-keyframes blink {
+	to {
+		visibility: hidden;
+	}
+}
 
 .box .hover-message-wrapper {
 	display: none;

@@ -17,8 +17,8 @@ function UserInfoBar(hackBrowserWindow) {
 	var userNameTextEl;
 	var researchTypeBoxEl;
 	var researchTypeTextEl;
-	var companiesBoxEl;
-	var companiesTextEl;
+	var companyBoxEl;
+	var companyTextEl;
 	var helpBoxEl;
 	var pictureDisplayBoxEl;
 	var trackingStatusBoxEl;
@@ -35,8 +35,8 @@ function UserInfoBar(hackBrowserWindow) {
 		userNameTextEl = userNameBoxEl.querySelector("p.info");
 		researchTypeBoxEl = document.getElementById("box-research-type");
 		researchTypeTextEl = researchTypeBoxEl.querySelector("p.info");
-		companiesBoxEl = document.getElementById("box-companies");
-		companiesTextEl = companiesBoxEl.querySelector("p.info");
+		companyBoxEl = document.getElementById("box-company");
+		companyTextEl = companyBoxEl.querySelector("p.info");
 		helpBoxEl = document.getElementById("box-link-help");
 		pictureDisplayBoxEl = document.getElementById("box-link-picture-display");
 		trackingStatusBoxEl = document.getElementById("box-tracking-status");
@@ -52,7 +52,7 @@ function UserInfoBar(hackBrowserWindow) {
 	 */
 	var attachEventHandlers = function() {
 		researchTypeBoxEl.addEventListener("click", handleResearchTypeBoxClick);
-		companiesBoxEl.addEventListener("click", handleCompaniesBoxClick);
+		companyBoxEl.addEventListener("click", handleCompaniesBoxClick);
 		trackingStatusBoxEl.addEventListener("click", handleTrackingStatusBoxClick);
 		helpBoxEl.addEventListener("click", handleHelpBoxClick);
 		pictureDisplayBoxEl.addEventListener("click", handlePictureDisplayBoxClick);
@@ -110,7 +110,7 @@ function UserInfoBar(hackBrowserWindow) {
 	};
 
 	_this.updateCompanies = function(val) {
-		companiesTextEl.textContent = val;
+		companyTextEl.textContent = val;
 	};
 
 	_this.syncUserInfoFromMainProcess = function() {

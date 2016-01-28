@@ -18,7 +18,7 @@
 
 			var researchTypeOtherRadioBtnEl;
 			var researchTypeOtherReasonInputEl;
-			var researchCompaniesInputEl;
+			var researchCompanyInputEl;
 			var submitBtnEl;
 			var cancelBtnEl;
 
@@ -37,7 +37,7 @@
 				researchTopicFormEl = document.getElementById("research-topic-form");
 				researchTypeOtherReasonInputEl = document.getElementById("input-reason-others");
 				researchTypeOtherRadioBtnEl = researchTopicFormEl.querySelector("input[data-keyword='other']");
-				researchCompaniesInputEl = document.getElementById("input-research-company");
+				researchCompanyInputEl = document.getElementById("input-research-company");
 				submitBtnEl = document.getElementById("submit");
 				cancelBtnEl = document.getElementById("cancel");
 				ipcRenderer.send("userInfoRequest", true);
@@ -65,7 +65,7 @@
 						researchTypeOtherReasonInputEl.value = researchTopicObj.researchTypeOtherReason;
 					}
 
-					researchCompaniesInputEl.value = researchTopicObj.researchCompanies;
+					researchCompanyInputEl.value = researchTopicObj.researchCompanies;
 				}
 			};
 
@@ -81,7 +81,7 @@
 						researchType: researchTypeEl.value,
 						researchTypeKey: researchTypeKey,
 						researchTypeOtherReason: researchTypeOtherReasonInputEl.value,
-						researchCompanies: researchCompaniesInputEl.value
+						researchCompanies: researchCompanyInputEl.value
 					}
 				};
 
@@ -155,7 +155,7 @@
 			</div>
 
 			<div class="item last">
-				<p class="question"><span class="number">2</span>What company(ies) are you researching?</p>
+				<p class="question"><span class="number">2</span>What company are you researching?</p>
 
 				<input type="text" id="input-research-company" required placeholder="Google, Facebook" />
 			</div><!-- // .item -->
