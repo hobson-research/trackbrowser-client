@@ -235,6 +235,10 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 	var handleDidNavigateInPage = function(e) {
 		console.log("[" + tabViewId + "] did-navigate-in-page");
 		console.log(e);
+
+		if (hackBrowserWindow.getActiveTabView() === _this) {
+			hackBrowserWindow.updateWindowControls();
+		}
 	};
 
 	var handleConsoleMessage = function(e) {
