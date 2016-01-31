@@ -98,7 +98,7 @@ function UserInfoBar(hackBrowserWindow) {
 	};
 
 	/* ====================================
-	 public methods
+	 pc methods
 	 ====================================== */
 
 	_this.updateUserName = function(val) {
@@ -135,9 +135,11 @@ function UserInfoBar(hackBrowserWindow) {
 	_this.setTrackingMode = function(enable) {
 		if (enable === true) {
 			trackingStatusSwitchWrapperEl.classList.add("on");
+			trackingStatusTextEl.classList.remove("blink");
 			trackingStatusTextEl.textContent = "On";
 		} else {
 			trackingStatusSwitchWrapperEl.classList.remove("on");
+			trackingStatusTextEl.classList.add("blink");
 			trackingStatusTextEl.textContent = "Off";
 		}
 	};
