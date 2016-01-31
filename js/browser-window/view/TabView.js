@@ -16,6 +16,8 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 
 	/* ====================================
 	 private member variables
+
+	 isDidNavigateHandled - whether a screenshot for a particular navigation has been handled
 	 ====================================== */
 	var webViewEl;
 	var webViewTitle;
@@ -25,6 +27,7 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 	var browserTab;
 	var isDOMReady;
 	var isWaitingForScreenshotWhenActivated;
+	var isDidNavigateHandled;
 
 
 	/* ====================================
@@ -43,6 +46,7 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 		isDOMReady = false;
 		tabViewId = "wv-" + hackBrowserWindow.getCreatedTabViewCount();
 		isWaitingForScreenshotWhenActivated = false;
+		isDidNavigateHandled = false;
 
 		// increase created tab view count
 		hackBrowserWindow.incrementCreatedTabViewCount();
@@ -140,7 +144,7 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 		browserTab.stopLoading();
 
 		// take screenshot and notify main process via ipc
-		if (hackBrowserWindow.getIsTrackingOn() === true) {
+		if ((hackBrowserWindow.getIsTrackingOn() === true) && (isDidNavigateHandled === false)) {
 			// send ipc message to record navigation
 			hackBrowserWindow.getIPCHandler().sendNavigationData(tabViewId, webViewEl.getURL(), function(result) {
 				if (result === true) {
@@ -155,8 +159,11 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 			else {
 				isWaitingForScreenshotWhenActivated = true;
 			}
+
+			// set flag for handling did-navigate status
+			isDidNavigateHandled = true;
 		} else {
-			console.log("Tracking mode is turned off");
+			console.log("Tracking mode is turned off or navigation is already handled");
 		}
 
 		if (hackBrowserWindow.getActiveTabView() === _this) {
@@ -228,6 +235,8 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 	var handleDidNavigate = function(e) {
 		console.log("[" + tabViewId + "] did-navigate");
 		console.log(e);
+
+		isDidNavigateHandled = false;
 
 		webViewURL = e.url;
 	};
