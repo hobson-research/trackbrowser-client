@@ -135,16 +135,16 @@ function ActivityRecorder(mainProcessController) {
 	};
 
 	_this.recordTrackingStatusChange = function(isTrackingOn) {
-		var formData = {
+		var trackingStatusData = {
 			type: 'tracking-status',
-			isTrackingOn: isTrackingOn
+			isTrackingOn: new Boolean(isTrackingOn).toString()	// can't be primitive boolean value
 		};
 
-		formData = addCommonInfoToPostObj(formData);
+		trackingStatusData = addCommonInfoToPostObj(trackingStatusData);
 
 		request.post({
 			url: tbServerHost + ":" + tbServerPort + "/api/v1/tracking-status",
-			formData: formData
+			formData: trackingStatusData
 		});
 	};
 
