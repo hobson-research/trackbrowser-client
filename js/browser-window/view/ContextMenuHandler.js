@@ -95,12 +95,15 @@ function ContextMenuHandler(hackBrowserWindow) {
 					hackBrowserWindow.addNewTab(link);
 				}
 			},
+			// new window feature is not supported at the moment
+			/*
 			{
 				label: "Open link in new window",
 				click: function(item, focusedWindow) {
 					hackBrowserWindow.addNewTab(link);
 				}
 			},
+			*/
 			{
 				label: "Copy link address",
 				click: function(item, focusedWindow) {

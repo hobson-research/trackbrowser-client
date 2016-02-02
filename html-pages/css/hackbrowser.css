@@ -138,6 +138,10 @@ nav#navtabs:after {
 	right: 0;
 }
 
+#button-menu {
+	display: none;
+}
+
 .controls > [id^=button-] {
 	color: #333;
 	display: inline-block;
