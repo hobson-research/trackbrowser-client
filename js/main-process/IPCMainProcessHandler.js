@@ -182,6 +182,8 @@ function IPCMainProcessHandler(mainProcessController) {
 	var handleTrackingStatusChange = function(event, isTrackingOn) {
 		mainProcessController.setIsTrackingOn(isTrackingOn);
 
+		mainProcessController.getActivityRecorder().recordTrackingStatusChange(isTrackingOn);
+
 		event.sender.send("trackingStatusChangeConfirm", true);
 	};
 

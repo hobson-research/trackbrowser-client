@@ -134,6 +134,20 @@ function ActivityRecorder(mainProcessController) {
 		});
 	};
 
+	_this.recordTrackingStatusChange = function(isTrackingOn) {
+		var formData = {
+			type: 'tracking-status',
+			isTrackingOn: isTrackingOn
+		};
+
+		formData = addCommonInfoToPostObj(formData);
+
+		request.post({
+			url: tbServerHost + ":" + tbServerPort + "/api/v1/tracking-status",
+			formData: formData
+		});
+	};
+
 	_this.setParticipantUserName = function(newUserName) {
 		userName = newUserName;
 	};
