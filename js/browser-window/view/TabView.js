@@ -268,8 +268,10 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 				}
 
 				else if (msgObject.eventType === "scroll") {
-					hackBrowserWindow.getIPCHandler().sendScrollEventData(tabViewId, webViewURL);
-					takeScreenshotAndRequestUpload();
+					if (hackBrowserWindow.getIsTrackingOn() === true) {
+						hackBrowserWindow.getIPCHandler().sendScrollEventData(tabViewId, webViewURL);
+						takeScreenshotAndRequestUpload();
+					}
 				}
 
 				else if ((msgObject.eventType === "focus") && (msgObject.type === "input/password")) {
@@ -278,8 +280,6 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 
 				else if ((msgObject.eventType === "blur") && (msgObject.type === "input/password")) {
 					// hackBrowserWindow.setIsTrackingOn(true);
-
-
 				}
 			} catch(err) {
 				// console.error(err);
