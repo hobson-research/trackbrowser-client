@@ -98,8 +98,6 @@ function MainProcessController() {
 			// Windows 7
 			// TODO: check if this binary file also works on Windows 8, Windows 10
 			ppapi_flash_path = path.join(GLOBAL.__app.basePath, "/binaries/pepflashplayer32_20_0_0_286.dll");
-			ppapi_flash_path = path.join("C:/Windows/SysWOW64/Macromed/Flash/pepflashplayer32_20_0_0_286.dll");
-
 		} else if (process.platform == 'darwin') {
 			// Mac OS
 			// TODO: check if different distributions of Mac OS can share same plugin binary
