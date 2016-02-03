@@ -327,21 +327,20 @@ function HackBrowserWindowManager(mainProcessController) {
 
 			// create the browser window
 			browserWindow = new BrowserWindow({
-				width: browserSize.width,
-				height: browserSize.height,
-				frame: true
+				'width': browserSize.width,
+				'height': browserSize.height,
+				'frame': true,
+				'web-preferences': {'plugins': true}
 			});
 
 			// load the HTML file for browser window
 			browserWindow.loadURL("file://" + __app.basePath + "/html-pages/browser-window.html");
 
 			// Open the DevTools (debugging)
-			// browserWindow.openDevTools();
+			browserWindow.openDevTools();
 
 			browserWindowList[browserWindow.id] = browserWindow;
 			attachEventHandlersToBrowserWindow(browserWindow);
-
-			// _this.openBrowserPictureDisplayWindow();
 
 			// increase window count
 			createdWindowCount++;

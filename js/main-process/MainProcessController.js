@@ -4,6 +4,7 @@
 const electron = require("electron");
 const app = electron.app;
 const fs = require("fs");
+const path = require("path");
 const dialog = require("dialog");
 const EventEmitter = require("events").EventEmitter;
 const session = require("electron").session;
@@ -35,6 +36,10 @@ function MainProcessController() {
 
 	var init = function() {
 		isTrackingOn = true;
+
+		// attempt to enable Pepper Flash Player plugin
+		// binary for pepper flash file is saved in {app-directory}/binaries/
+		enablePepperFlashPlayer();
 
 		attachEventHandlers();
 	};
@@ -77,6 +82,38 @@ function MainProcessController() {
 				}
 			});
 		});
+	};
+
+	/**
+	 * attempt to enable flash with Pepper Flash player
+	 *
+	 * supported OS versions
+	 * Windows 7 64-bit, Mac OS 64-bit
+	 */
+	var enablePepperFlashPlayer = function() {
+		var ppapi_flash_path = null;
+
+		// specify flash path based on OS
+		if(process.platform  == 'win32'){
+			// Windows 7
+			// TODO: check if this binary file also works on Windows 8, Windows 10
+			ppapi_flash_path = path.join(GLOBAL.__app.basePath, "/binaries/pepflashplayer32_20_0_0_286.dll");
+			ppapi_flash_path = path.join("C:/Windows/SysWOW64/Macromed/Flash/pepflashplayer32_20_0_0_286.dll");
+
+		} else if (process.platform == 'darwin') {
+			// Mac OS
+			// TODO: check if different distributions of Mac OS can share same plugin binary
+			ppapi_flash_path = path.join(GLOBAL.__app.basePath, "/binaries/PepperFlashPlayer.plugin");
+		}
+
+		// in case ppapi_flash_path is set
+		if (ppapi_flash_path) {
+			console.log("enabling Pepper Flash Player plugin");
+			console.log("binary path: " + ppapi_flash_path);
+
+			app.commandLine.appendSwitch('ppapi-flash-path', ppapi_flash_path);
+			app.commandLine.appendSwitch('ppapi-flash-version', '20.0.0.286');
+		}
 	};
 
 	var startBrowser = function() {
