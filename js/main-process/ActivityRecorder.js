@@ -77,10 +77,20 @@ function ActivityRecorder(mainProcessController) {
 	};
 
 	// currently, click events are not posted to server
-	// there is no way to differentiate meaningful and meaningless clicks
 	// instead, screenshots are sent to server when a navigation is done
-	_this.recordClickEvent = function(tabViewId, url, eventData) {
+	_this.recordClickEvent = function(tabViewId, url) {
+		var clickData = {
+			type: "click",
+			tabViewId: tabViewId,
+			url: url
+		};
 
+		clickData = addCommonInfoToPostObj(clickData);
+
+		request.post({
+			url: tbServerHost + ":" + tbServerPort + "/api/v1/click",
+			formData: clickData
+		});
 	};
 
 	_this.recordScrollEvent = function(tabViewId, url) {

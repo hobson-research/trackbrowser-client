@@ -99,12 +99,13 @@ function IPCRendererProcessHandler(hackBrowserWindow) {
 		ipcRenderer.send("navigationData", JSON.stringify(sendMsgObj));
 	};
 
-	_this.sendMouseEventData = function(tabViewId, url, eventData) {
-		// add tabViewId and url to mouse event data
-		eventData.tabViewId = tabViewId;
-		eventData.url = url;
+	_this.sendMouseEventData = function(tabViewId, url) {
+		var sendMsgObj = {
+			tabViewId: tabViewId,
+			url: url
+		};
 
-		ipcRenderer.send("mouseEventData", JSON.stringify(eventData));
+		ipcRenderer.send("mouseEventData", JSON.stringify(sendMsgObj));
 	};
 
 	_this.sendScrollEventData = function(tabViewId, url) {

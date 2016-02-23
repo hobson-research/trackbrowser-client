@@ -130,24 +130,20 @@
 	// attach event handler for regular clicks
 	document.addEventListener('click', function(e) {
 		handleMouseEvent(e);
-		console.log(e);
 	}); // END: document.addEventListener('click', function(e) {}
 
 	// attach event handler for right clicks
 	document.addEventListener('contextmenu', function(e) {
 		handleMouseEvent(e);
-		console.log(e);
 	}); // END: document.addEventListener('contextmenu', function(e) {}
 
 	// attach event handlers for focus/blur events
 	// the third parameter enforces focus/blur events to bubble
 	document.addEventListener('focus', function(e) {
 		handleMouseEvent(e);
-		console.log(e);
 	}, true);
 
 	document.addEventListener('blur', function(e) {
 		handleMouseEvent(e);
-		console.log(e);
 	}, true);
 })();

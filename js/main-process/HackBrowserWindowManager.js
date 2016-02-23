@@ -138,19 +138,6 @@ function HackBrowserWindowManager(mainProcessController) {
 		}
 	};
 
-	var setBrowserPictureDisplayWindowVisibility = function(isVisible) {
-		// if either browserWindow or browserPictureDisplayWindow is not open, do nothing
-		if ((browserWindow === null) || (browserPictureDisplayWindow === null)) return;
-
-		if (isVisible === true) {
-			browserPictureDisplayWindow.showInactive();
-		} else {
-			if (browserPictureDisplayWindow.isFocused() === false) {
-				browserPictureDisplayWindow.hide();
-			}
-		}
-	};
-
 
 	/* ====================================
 	 public methods
@@ -337,7 +324,7 @@ function HackBrowserWindowManager(mainProcessController) {
 			browserWindow.loadURL("file://" + __app.basePath + "/html-pages/browser-window.html");
 
 			// Open the DevTools (debugging)
-			// browserWindow.openDevTools();
+			browserWindow.openDevTools();
 
 			browserWindowList[browserWindow.id] = browserWindow;
 			attachEventHandlersToBrowserWindow(browserWindow);

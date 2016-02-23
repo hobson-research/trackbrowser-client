@@ -31,6 +31,7 @@ function IPCMainProcessHandler(mainProcessController) {
 		ipcMain.on("researchTopicInput", handleResearchTopicInput);
 		ipcMain.on("userInfoRequest", handleUserInfoRequest);
 		ipcMain.on("navigationData", handleNavigationData);
+		ipcMain.on("mouseEventData", handleMouseEventData);
 		ipcMain.on("scrollEventData", handleEventScrollData);
 		ipcMain.on("screenshotUploadRequest", handleScreenshotUploadRequest);
 		ipcMain.on("helpWindowOpenRequest", handleHelpWindowOpenRequest);
@@ -152,6 +153,12 @@ function IPCMainProcessHandler(mainProcessController) {
 		var navigationDataObj = JSON.parse(navigationDataJSON);
 
 		mainProcessController.getActivityRecorder().recordNavigation(navigationDataObj.tabViewId, navigationDataObj.url);
+	};
+
+	var handleMouseEventData = function(event, clickDataJSON) {
+		var clickDataObj = JSON.parse(clickDataJSON);
+
+		mainProcessController.getActivityRecorder().recordClickEvent(clickDataObj.tabViewId, clickDataObj.url);
 	};
 
 

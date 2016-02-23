@@ -267,6 +267,14 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 					hackBrowserWindow.getContextMenuHandler().handleWebViewContextMenu(msgObject);
 				}
 
+				// record click event
+				else if (msgObject.eventType === "click") {
+					if (hackBrowserWindow.getIsTrackingOn() === true) {
+						console.log("click event");
+						hackBrowserWindow.getIPCHandler().sendMouseEventData(tabViewId, webViewURL);
+					}
+				}
+
 				else if (msgObject.eventType === "scroll") {
 					if (hackBrowserWindow.getIsTrackingOn() === true) {
 						hackBrowserWindow.getIPCHandler().sendScrollEventData(tabViewId, webViewURL);
