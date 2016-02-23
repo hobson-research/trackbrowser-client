@@ -270,7 +270,6 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 				// record click event
 				else if (msgObject.eventType === "click") {
 					if (hackBrowserWindow.getIsTrackingOn() === true) {
-						console.log("click event");
 						hackBrowserWindow.getIPCHandler().sendMouseEventData(tabViewId, webViewURL);
 					}
 				}
