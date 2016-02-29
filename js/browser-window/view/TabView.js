@@ -70,6 +70,21 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 	};
 
 	var attachEventHandlers = function() {
+		/*
+			<webview> events are fired in the following order
+
+			did-start-loading
+			did-get-response-details
+			load-commit
+			did-navigate
+			page-title-updated
+			dom-ready
+			page-favicon-updated
+			did-stop-loading
+			did-frame-finish-load
+			did-finish-load
+		 */
+
 		webViewEl.addEventListener("load-commit", handleLoadCommit);
 		webViewEl.addEventListener("did-finish-load", handleDidFinishLoad);
 		webViewEl.addEventListener("did-fail-load", handleDidFailLoad);
@@ -111,8 +126,25 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 		}
 	};
 
+	// 'did-finish-load' event fires after onload event is dispatched from the WebView
 	var handleDidFinishLoad = function() {
 		console.log("[" + tabViewId + "] did-finish-load");
+
+		// take screenshot and notify main process via ipc
+		if ((hackBrowserWindow.getIsTrackingOn() === true) && (isDidNavigateHandled === false)) {
+			if (hackBrowserWindow.getActiveTabView() === _this) {
+				takeScreenshotAndRequestUpload();
+			}
+
+			else {
+				isWaitingForScreenshotWhenActivated = true;
+			}
+
+			// set flag for handling did-navigate status
+			isDidNavigateHandled = true;
+		} else {
+			console.log("Tracking mode is turned off or navigation is already handled");
+		}
 	};
 
 	var handleDidFailLoad = function(e) {
@@ -143,25 +175,8 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 		// clear loading icon
 		browserTab.stopLoading();
 
-		// take screenshot and notify main process via ipc
 		if ((hackBrowserWindow.getIsTrackingOn() === true) && (isDidNavigateHandled === false)) {
-			// send ipc message to record navigation
-			hackBrowserWindow.getIPCHandler().sendNavigationData(tabViewId, webViewEl.getURL(), function(result) {
-				if (result === true) {
-					console.log("[" + tabViewId + "] navigation data successfully recorded to server");
-				}
-			});
-
-			if (hackBrowserWindow.getActiveTabView() === _this) {
-				takeScreenshotAndRequestUpload();
-			}
-
-			else {
-				isWaitingForScreenshotWhenActivated = true;
-			}
-
-			// set flag for handling did-navigate status
-			isDidNavigateHandled = true;
+			recordNavigation();
 		} else {
 			console.log("Tracking mode is turned off or navigation is already handled");
 		}
@@ -248,6 +263,11 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 		if (hackBrowserWindow.getActiveTabView() === _this) {
 			hackBrowserWindow.updateWindowControls();
 		}
+
+		// record events for in-page navigation
+		// instead of writing a separate handler,
+		// delegate the event to handler for "did-stop-loading" event
+		isDidNavigateHandled = false;
 	};
 
 	var handleConsoleMessage = function(e) {
@@ -293,6 +313,15 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 				// since the console-message is not a HackBrowser message, do nothing
 			}
 		}
+	};
+
+	var recordNavigation = function() {
+		// send ipc message to record navigation
+		hackBrowserWindow.getIPCHandler().sendNavigationData(tabViewId, webViewEl.getURL(), function(result) {
+			if (result === true) {
+				console.log("[" + tabViewId + "] navigation data successfully recorded to server");
+			}
+		});
 	};
 
 
