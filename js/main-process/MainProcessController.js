@@ -97,7 +97,7 @@ function MainProcessController() {
 		if(process.platform  == 'win32'){
 			// Windows 7
 			// TODO: check if this binary file also works on Windows 8, Windows 10
-			ppapi_flash_path = path.join(GLOBAL.__app.basePath, "/binaries/pepflashplayer32_20_0_0_286.dll");
+			ppapi_flash_path = path.join(GLOBAL.__app.basePath, "/binaries/pepflashplayer32_20_0_0_306.dll");
 		} else if (process.platform == 'darwin') {
 			// Mac OS
 			// TODO: check if different distributions of Mac OS can share same plugin binary
@@ -110,7 +110,7 @@ function MainProcessController() {
 			console.log("binary path: " + ppapi_flash_path);
 
 			app.commandLine.appendSwitch('ppapi-flash-path', ppapi_flash_path);
-			app.commandLine.appendSwitch('ppapi-flash-version', '20.0.0.286');
+			app.commandLine.appendSwitch('ppapi-flash-version', '20.0.0.306');
 		}
 	};
 
