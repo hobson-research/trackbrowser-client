@@ -33,6 +33,8 @@ function HackBrowserWindowController() {
 	var userName;
 	var dataPath;
 
+	var fibonacciScreenshotTimer;
+
 
 	/* ====================================
 	 private methods
@@ -69,11 +71,42 @@ function HackBrowserWindowController() {
 
 		_this.addNewTab("http://www.google.com/", true);
 
+		// initialize new fibonacci counter
+		_this.resetFibonacciScreenshotTimer();
+
 		attachEventHandlers();
 	};
 
 	var attachEventHandlers = function() {
 
+	};
+
+	var scheduleFibonacciScreenshot = function(currDelay, prevDelay) {
+		// in milliseconds
+		var nextScreenshotDelay = 0;
+
+		var ONE_MIUNTE = 1 * 1000 * 60;
+		var TWO_MINUTE = 2 * 1000 * 60;
+
+		if ((!currDelay) || (currDelay < ONE_MINUTE)) {
+			nextScreenshotDelay = ONE_MINUTE;
+		} else if (currDelay === ONE_MINUTE) {
+			nextScreenshotDelay = TWO_MINUTE;
+		} else if (currDelay > ONE_MINUTE) {
+			nextScreenshotDelay = currDelay + prevDelay;
+		}
+
+		if (fibonacciScreenshotTimer) {
+			clearTimeout(fibonacciScreenshotTimer);
+
+			fibonacciScreenshotTimer = setTimeout(function() {
+				if (isTrackingOn === true) {
+					_this.getActiveTabView().takeScreenshotAndRequestUpload(function() {
+						scheduleFibonacciScreenshot(nextScreenshotDelay, currDelay)
+					});
+				}
+			}, nextScreenshotDelay);
+		}
 	};
 
 
@@ -349,6 +382,11 @@ function HackBrowserWindowController() {
 		ipcHandler.notifyTrackingStatusChange(function() {
 			console.log("notified tracking status update");
 		});
+	};
+
+	// reset counter for Fibonacci screenshot
+	_this.resetFibonacciScreenshotTimer = function() {
+		scheduleFibonacciScreenshot();
 	};
 
 	init();

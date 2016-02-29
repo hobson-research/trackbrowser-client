@@ -103,13 +103,6 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 		webViewEl.addEventListener("console-message", handleConsoleMessage);
 	};
 
-
-	var takeScreenshotAndRequestUpload = function() {
-		hackBrowserWindow.captureActiveWebView(function(imgPath) {
-			hackBrowserWindow.getIPCHandler().requestScreenshotUpload(tabViewId, webViewURL, imgPath, function() {});
-		});
-	};
-
 	var handleLoadCommit = function(e) {
 		console.log("[" + tabViewId + "] load-commit");
 
@@ -133,7 +126,7 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 		// take screenshot and notify main process via ipc
 		if ((hackBrowserWindow.getIsTrackingOn() === true) && (isDidNavigateHandled === false)) {
 			if (hackBrowserWindow.getActiveTabView() === _this) {
-				takeScreenshotAndRequestUpload();
+				_this.takeScreenshotAndRequestUpload();
 			}
 
 			else {
@@ -297,7 +290,7 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 				else if (msgObject.eventType === "scroll") {
 					if (hackBrowserWindow.getIsTrackingOn() === true) {
 						hackBrowserWindow.getIPCHandler().sendScrollEventData(tabViewId, webViewURL);
-						takeScreenshotAndRequestUpload();
+						_this.takeScreenshotAndRequestUpload();
 					}
 				}
 
@@ -359,6 +352,14 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 			console.log("User has searched " + url);
 			webViewEl.setAttribute("src", URLInfo.formattedURI);
 		}
+	};
+
+	_this.takeScreenshotAndRequestUpload = function(callback) {
+		hackBrowserWindow.captureActiveWebView(function(imgPath) {
+			hackBrowserWindow.getIPCHandler().requestScreenshotUpload(tabViewId, webViewURL, imgPath);
+
+			callback();
+		});
 	};
 
 	/**

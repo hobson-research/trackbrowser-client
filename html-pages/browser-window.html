@@ -26,94 +26,94 @@
 	<script src="../js/browser-window/init.js"></script>
 </head>
 <body>
-<nav id="navtabs" class="unselectable">
-	<div id="add-tab">
-		<div class="icon-wrapper">
-			<i class="icon ion-plus"></i>
-		</div><!-- // .icon-wrapper -->
-	</div><!-- // #add-tab -->
-</nav><!-- // nav#navbar -->
+	<nav id="navtabs" class="unselectable">
+		<div id="add-tab">
+			<div class="icon-wrapper">
+				<i class="icon ion-plus"></i>
+			</div><!-- // .icon-wrapper -->
+		</div><!-- // #add-tab -->
+	</nav><!-- // nav#navbar -->
 
-<section id="menubar" class="unselectable">
-	<div id="menu-left" class="controls left">
-		<div id="button-back" class="icon-button disabled">
-			<i class="icon ion-ios-arrow-back"></i>
-		</div><!-- // #button-back -->
+	<section id="menubar" class="unselectable">
+		<div id="menu-left" class="controls left">
+			<div id="button-back" class="icon-button disabled">
+				<i class="icon ion-ios-arrow-back"></i>
+			</div><!-- // #button-back -->
 
-		<div id="button-forward" class="icon-button disabled">
-			<i class="icon ion-ios-arrow-forward"></i>
-		</div><!-- // #button-forward -->
+			<div id="button-forward" class="icon-button disabled">
+				<i class="icon ion-ios-arrow-forward"></i>
+			</div><!-- // #button-forward -->
 
-		<div id="button-reload" class="icon-button">
-			<i class="icon ion-android-refresh"></i>
-		</div><!-- // #button-reload -->
+			<div id="button-reload" class="icon-button">
+				<i class="icon ion-android-refresh"></i>
+			</div><!-- // #button-reload -->
 
-		<div id="button-stop-loading" class="icon-button">
-			<i class="icon ion-android-close"></i>
-		</div><!-- // #button-stop-loading -->
-	</div><!-- // controls.left -->
+			<div id="button-stop-loading" class="icon-button">
+				<i class="icon ion-android-close"></i>
+			</div><!-- // #button-stop-loading -->
+		</div><!-- // controls.left -->
 
-	<div id="address-bar-wrapper">
-		<input type="text" id="address-bar" />
-	</div><!-- // #address-bar-wrapper -->
+		<div id="address-bar-wrapper">
+			<input type="text" id="address-bar" />
+		</div><!-- // #address-bar-wrapper -->
 
-	<div id="menu-right" class="controls right">
-		<div id="button-menu" class="icon-button"><i class="icon ion-navicon-round"></i></div>
-	</div><!-- // .controls.right -->
-</section><!-- // #menubar -->
+		<div id="menu-right" class="controls right">
+			<div id="button-menu" class="icon-button"><i class="icon ion-navicon-round"></i></div>
+		</div><!-- // .controls.right -->
+	</section><!-- // #menubar -->
 
-<!-- Wrapper for WebView elements -->
-<section id="webview-wrapper">
-</section><!-- // section#webview-wrapper -->
+	<!-- Wrapper for WebView elements -->
+	<section id="webview-wrapper">
+	</section><!-- // section#webview-wrapper -->
 
-<div id="user-info-bar" class="unselectable">
-	<div id="box-user-name" class="box">
-		<h4>User Name</h4>
-		<p class="info">104112</p>
-	</div><!-- // .box -->
+	<div id="user-info-bar" class="unselectable">
+		<div id="box-user-name" class="box">
+			<h4>User Name</h4>
+			<p class="info">104112</p>
+		</div><!-- // .box -->
 
-	<div id="box-research-type" class="box box-hover box-hover-message">
-		<h4>Research Purpose</h4>
-		<p class="info">Decrease my position in investment</p>
+		<div id="box-research-type" class="box box-hover box-hover-message">
+			<h4>Research Purpose</h4>
+			<p class="info">Decrease my position in investment</p>
 
-		<div class="hover-message-wrapper">
-			<p>Click to change what you're researching into</p>
+			<div class="hover-message-wrapper">
+				<p>Click to change what you're researching into</p>
+			</div>
+		</div><!-- // .box -->
+
+		<div id="box-company" class="box box-hover box-hover-message">
+			<h4>Company</h4>
+			<p class="info">Samsung, Google, Facebook</p>
+
+			<div class="hover-message-wrapper">
+				<p>Click to change companies you're researching</p>
+			</div>
+		</div><!-- // .box -->
+
+		<div id="box-link-help" class="box box-hover">
+			<i class="icon ion-ios-help-outline"></i>
+
+			<h4>Help</h4>
+			<p class="info">Click to open help page</p>
 		</div>
-	</div><!-- // .box -->
 
-	<div id="box-company" class="box box-hover box-hover-message">
-		<h4>Company</h4>
-		<p class="info">Samsung, Google, Facebook</p>
-
-		<div class="hover-message-wrapper">
-			<p>Click to change companies you're researching</p>
+		<div id="box-link-picture-display" class="box box-hover">
+			<h4>Daily Picture</h4>
+			<p class="info">Click to view</p>
 		</div>
-	</div><!-- // .box -->
 
-	<div id="box-link-help" class="box box-hover">
-		<i class="icon ion-ios-help-outline"></i>
+		<div id="box-tracking-status" class="box box-hover box-hover-message">
+			<h4>Tracking Status</h4>
+			<p class="info">On</p>
 
-		<h4>Help</h4>
-		<p class="info">Click to open help page</p>
+			<div id="tracking-switch-wrapper" class="on">
+				<div id="tracking-switch"></div>
+			</div>
+
+			<div class="hover-message-wrapper">
+				<p>Click to toggle tracking</p>
+			</div>
+		</div>
 	</div>
-
-	<div id="box-link-picture-display" class="box box-hover">
-		<h4>Daily Picture</h4>
-		<p class="info">Click to view</p>
-	</div>
-
-	<div id="box-tracking-status" class="box box-hover box-hover-message">
-		<h4>Tracking Status</h4>
-		<p class="info">On</p>
-
-		<div id="tracking-switch-wrapper" class="on">
-			<div id="tracking-switch"></div>
-		</div>
-
-		<div class="hover-message-wrapper">
-			<p>Click to toggle tracking</p>
-		</div>
-	</div>
-</div>
 </body>
 </html>
