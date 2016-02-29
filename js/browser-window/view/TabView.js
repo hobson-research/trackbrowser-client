@@ -355,6 +355,8 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 	};
 
 	_this.takeScreenshotAndRequestUpload = function(callback) {
+		callback = callback || function() {};
+
 		hackBrowserWindow.captureActiveWebView(function(imgPath) {
 			hackBrowserWindow.getIPCHandler().requestScreenshotUpload(tabViewId, webViewURL, imgPath);
 

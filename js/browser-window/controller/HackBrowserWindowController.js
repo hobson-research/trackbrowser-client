@@ -85,7 +85,7 @@ function HackBrowserWindowController() {
 		// in milliseconds
 		var nextScreenshotDelay = 0;
 
-		var ONE_MIUNTE = 1 * 1000 * 60;
+		var ONE_MINUTE = 1 * 1000 * 60;
 		var TWO_MINUTE = 2 * 1000 * 60;
 
 		if ((!currDelay) || (currDelay < ONE_MINUTE)) {
@@ -98,15 +98,16 @@ function HackBrowserWindowController() {
 
 		if (fibonacciScreenshotTimer) {
 			clearTimeout(fibonacciScreenshotTimer);
-
-			fibonacciScreenshotTimer = setTimeout(function() {
-				if (isTrackingOn === true) {
-					_this.getActiveTabView().takeScreenshotAndRequestUpload(function() {
-						scheduleFibonacciScreenshot(nextScreenshotDelay, currDelay)
-					});
-				}
-			}, nextScreenshotDelay);
 		}
+
+		// schedule fibonacci timer
+		fibonacciScreenshotTimer = setTimeout(function() {
+			if (isTrackingOn === true) {
+				_this.getActiveTabView().takeScreenshotAndRequestUpload(function() {
+					scheduleFibonacciScreenshot(nextScreenshotDelay, currDelay);
+				});
+			}
+		}, nextScreenshotDelay);
 	};
 
 
