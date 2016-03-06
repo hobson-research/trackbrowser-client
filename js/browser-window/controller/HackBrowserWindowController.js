@@ -78,10 +78,28 @@ function HackBrowserWindowController() {
 	};
 
 	var attachEventHandlers = function() {
+		// shortcuts
+		key('ctrl+f', function() {
+			console.log("ctrl+f pressed");
+		});
 
+		// TODO: change to TabView refresh
+		// temporarily refresh browser page for debugging
+		key('ctrl+r', function() {
+			console.log("reloading browser page");
+
+			// reload the current page without using the cache
+			document.location.reload(true);
+		});
+
+		key('esc', function() {
+			console.log("esc pressed");
+		});
 	};
 
 	var scheduleFibonacciScreenshot = function(currDelay, prevDelay) {
+		console.log("Fibonacci Screenshot - currDelay: " + currDelay + ", prevDelay: " + prevDelay);
+
 		// in milliseconds
 		var nextScreenshotDelay = 0;
 
