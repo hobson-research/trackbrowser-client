@@ -22,7 +22,10 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 	var webViewEl;
 	var webViewTitle;
 	var webViewURL;
+	var webViewContainerEl;
 	var webViewWrapperEl;
+	var searchBox;
+	var searchBoxEl;
 	var tabViewId;
 	var browserTab;
 	var isDOMReady;
@@ -40,9 +43,11 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 	 */
 	var init = function(url) {
 		webViewEl = document.createElement("webview");
+		webViewWrapperEl = document.createElement("div");
+		webViewWrapperEl.classList.add("webview-wrapper");
 		webViewTitle = "New Tab";
 		webViewURL = url;
-		webViewWrapperEl = document.getElementById("webview-wrapper");
+		webViewContainerEl = document.getElementById("webview-container");
 		isDOMReady = false;
 		tabViewId = "wv-" + hackBrowserWindow.getCreatedTabViewCount();
 		isWaitingForScreenshotWhenActivated = false;
@@ -62,8 +67,14 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 			_this.navigateTo(url);
 		}
 
-		// append the webview element to screen (#webview-wrapper)
+		// append search box
+		searchBox = new SearchBox(_this);
+		searchBoxEl = searchBox.getSearchWrapperEl();
+
+		// append the webview element to screen (#webview-container)
 		webViewWrapperEl.appendChild(webViewEl);
+		webViewWrapperEl.appendChild(searchBoxEl);
+		webViewContainerEl.appendChild(webViewWrapperEl);
 
 		browserTab = browserTabBar.createTab(tabViewId);
 		attachEventHandlers();
@@ -368,7 +379,7 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 	 * activate TabView (user clicks on this browser tab)
 	 */
 	_this.activate = function() {
-		webViewEl.style.visibility = "visible";
+		webViewWrapperEl.style.visibility = "visible";
 		browserTab.activate();
 	};
 
@@ -376,7 +387,7 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 	 * deactivate TabView (user clicks on another browser tab)
 	 */
 	_this.deactivate = function() {
-		webViewEl.style.visibility = "hidden";
+		webViewWrapperEl.style.visibility = "hidden";
 		browserTab.deactivate();
 	};
 
@@ -394,7 +405,7 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 	 */
 	_this.close = function() {
 		// remove webview element
-		webViewWrapperEl.removeChild(webViewEl);
+		webViewContainerEl.removeChild(webViewEl);
 	};
 
 	_this.getId = function() {

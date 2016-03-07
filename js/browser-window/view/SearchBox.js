@@ -3,23 +3,28 @@
 /**
  * Find function
  *
- * @param hackBrowserWindow
+ * @param tabView
  * @constructor
  */
-function SearchBox(hackBrowserWindow) {
+function SearchBox(tabView) {
 	var _this = this;
 
 	/* ====================================
 	 private member variables
 	 ====================================== */
+	var searchWrapperEl;
 	var searchInputEl;
-
 
 	/* ====================================
 	 private methods
 	 ====================================== */
 	var init = function() {
-		searchInputEl = document.getElementById("address-bar");
+		searchWrapperEl = document.createElement("div");
+		searchWrapperEl.classList.add("search-wrapper");
+		searchWrapperEl.innerHTML = '<input type="text" class="search" /><a class="button prev"><i class="icon ion-ios-arrow-up"></i></a> <a class="button next"><i class="icon ion-ios-arrow-down"></i></a> <a class="button close"><i class="icon ion-android-close"></i></a>';
+
+		searchInputEl = searchWrapperEl.querySelector("input.search");
+
 		attachEventHandlers();
 	};
 
@@ -42,6 +47,10 @@ function SearchBox(hackBrowserWindow) {
 	/* ====================================
 	 public methods
 	 ====================================== */
+	_this.getSearchWrapperEl = function() {
+		return searchWrapperEl;
+	};
+
 
 	init();
 }

@@ -17,6 +17,7 @@
 	<script src="../js/browser-window/view/BrowserTabBar.js"></script>
 	<script src="../js/browser-window/view/BrowserTab.js"></script>
 	<script src="../js/browser-window/view/AddressBar.js"></script>
+	<script src="../js/browser-window/view/SearchBox.js"></script>
 	<script src="../js/browser-window/view/UserInfoBar.js"></script>
 	<script src="../js/browser-window/view/NavigationControls.js"></script>
 	<script src="../js/browser-window/view/ContextMenuHandler.js"></script>
@@ -62,19 +63,11 @@
 		<div id="menu-right" class="controls right">
 			<div id="button-menu" class="icon-button"><i class="icon ion-navicon-round"></i></div>
 		</div><!-- // .controls.right -->
-
-		<div id="search-wrapper">
-			<input type="text" id="search" />
-
-			<a id="prev"><i class="icon ion-ios-arrow-up"></i></a>
-			<a id="next"><i class="icon ion-ios-arrow-down"></i></a>
-			<a id="clear"><i class="icon ion-android-close"></i></a>
-		</div><!-- // #search-wrapper -->
 	</section><!-- // #menubar -->
 
 	<!-- Wrapper for WebView elements -->
-	<section id="webview-wrapper">
-	</section><!-- // section#webview-wrapper -->
+	<section id="webview-container">
+	</section><!-- // section#webview-container -->
 
 	<div id="user-info-bar" class="unselectable">
 		<div id="box-user-name" class="box">
