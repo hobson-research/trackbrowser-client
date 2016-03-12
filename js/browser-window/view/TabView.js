@@ -405,7 +405,7 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 	 */
 	_this.close = function() {
 		// remove webview element
-		webViewContainerEl.removeChild(webViewEl);
+		webViewContainerEl.removeChild(webViewWrapperEl);
 	};
 
 	_this.getId = function() {
@@ -422,6 +422,10 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 
 	_this.getURL = function() {
 		return webViewURL;
+	};
+
+	_this.getSearchBox = function() {
+		return searchBox;
 	};
 
 	_this.updateTabFavicon = function(imageURL) {

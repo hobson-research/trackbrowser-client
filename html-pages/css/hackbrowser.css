@@ -215,35 +215,85 @@ input#address-bar {
 
 /* Search Box */
 .search-wrapper {
+	display: none;
 	background: #f5f5f5;
 	position: absolute;
-	top: 0;
+	top: -1px;
 	right: 20px;
 	z-index: 20;
-	width: 300px;
+	width: 340px;
 	height: 34px;
 	padding: 4px;
 	box-sizing: border-box;
 	border: 1px solid #ddd;
 	border-top: none;
+	border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
 }
 
+.search-input-wrapper {
+	width: 300px;
+	position: absolute;
+	top: 3px;
+	left: 3px;
+	padding: 3px 4px;
+	border-radius: 3px;
+	border: 1px solid #ddd;
+	background: #fff;
+}
+
+.button-group {
+	position: absolute;
+	top: 2px;
+	right: 0;
+}
+
+	.button-group a.button {
+		border: 1px solid #f5f5f5;
+		padding: 3px 8px;
+		background: #f5f5f5;
+	}
+
+		a.button.prev {
+			border-left-color: #ddd;
+		}
+
+		a.button.next {
+			border-left-color: #ddd;
+			border-top-right-radius: 3px;
+			border-bottom-right-radius: 3px;
+		}
+
+		.button-group a.button:hover {
+			background: #f9f9f9;
+		}
+
 .search-wrapper input.search {
+	border: none;
+	background: none;
+	width: 200px;
 	font-size: 14px;
 	line-height: 14px;
-	padding: 3px 4px;
-	border: 1px solid #ccc;
-	border-radius: 3px;
 	outline: none;
 }
 
 .search-wrapper a.button {
 	font-size: 14px;
 	line-height: 14px;
-	padding: 3px 6px;
-	border: 1px solid #ccc;
+	text-align: center;
 	cursor: pointer;
 }
+
+	.search-wrapper a.button.close {
+		position: absolute;
+		top: 10px;
+		right: 9px;
+	}
+
+
+
+
+
 
 
 #user-info-bar {

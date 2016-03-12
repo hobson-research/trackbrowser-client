@@ -19,8 +19,8 @@ function HackBrowserWindowController() {
 	var ipcHandler;
 
 	var menuBar;
-	var addressBar;
 	var browserTabBar;
+	var addressBar;
 	var userInfoBar;
 
 	var contextMenuHandler;
@@ -45,8 +45,8 @@ function HackBrowserWindowController() {
 
 		// create a new NavigationControls object associated with current browser window
 		menuBar = new NavigationControls(_this);
-		addressBar = new AddressBar(_this);
 		browserTabBar = new BrowserTabBar(_this);
+		addressBar = new AddressBar(_this);
 		userInfoBar = new UserInfoBar(_this);
 
 		contextMenuHandler = new ContextMenuHandler(_this);
@@ -80,7 +80,7 @@ function HackBrowserWindowController() {
 	var attachEventHandlers = function() {
 		// shortcuts
 		key('ctrl+f', function() {
-			console.log("ctrl+f pressed");
+			activeTabView.getSearchBox().open();
 		});
 
 		// TODO: change to TabView refresh
@@ -93,7 +93,7 @@ function HackBrowserWindowController() {
 		});
 
 		key('esc', function() {
-			console.log("esc pressed");
+			activeTabView.getSearchBox().close();
 		});
 	};
 

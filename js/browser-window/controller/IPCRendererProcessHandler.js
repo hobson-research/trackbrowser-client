@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * TrackBrowser user information bar
+ * IPC handler for renderer process
  *
  * @param hackBrowserWindow
  * @constructor
