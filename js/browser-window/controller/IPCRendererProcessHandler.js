@@ -117,6 +117,15 @@ function IPCRendererProcessHandler(hackBrowserWindow) {
 		ipcRenderer.send("scrollEventData", JSON.stringify(sendMsgObj));
 	};
 
+	_this.sendInputEventData = function(tabViewId, url, inputData) {
+		var inputDataObj = inputData;
+
+		inputDataObj['tabViewId'] = tabViewId;
+		inputDataObj['url'] = url;
+
+		ipcRenderer.send("inputEventData", JSON.stringify(inputDataObj));
+	};
+
 	_this.requestScreenshotUpload = function(tabViewId, url, filePath) {
 		var screenshotDataObj = {
 			tabViewId: tabViewId,

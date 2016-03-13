@@ -108,6 +108,15 @@ function ActivityRecorder(mainProcessController) {
 		});
 	};
 
+	_this.recordInputEvent = function(inputData) {
+		inputData['type'] = input;
+
+		request.post({
+			url: tbServerHost + ":" + tbServerPort + "/api/v1/input",
+			formData: inputData
+		});
+	};
+
 	_this.recordFileDownload = function(itemData) {
 		itemData = addCommonInfoToPostObj(itemData);
 
