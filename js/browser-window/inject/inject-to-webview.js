@@ -51,20 +51,15 @@
 
 		// check if input node
 		else if (e.srcElement.nodeName === 'INPUT') {
-			// Check if text type
-			if (e.srcElement.type === 'text') {
-				returnObj.type = 'input/text';
+			returnObj.type = 'input/' + e.srcElement.type;
+			returnObj.inputId = e.srcElement.id;
+			returnObj.inputValue = e.srcElement.value;
+			returnObj.inputName = e.srcElement.name;
+			returnObj.inputOuterHTML = e.srcElement.outerHTML;
 
-				// Store input information
-				returnObj.inputId = e.srcElement.id;
-				returnObj.inputValue = e.srcElement.value;
-				returnObj.inputName = e.srcElement.name;
-				returnObj.inputOuterHTML = e.srcElement.outerHTML;
-			}
-
-			// Check if password type
-			else if (e.srcElement.type === 'password') {
-				returnObj.type = 'input/password';
+			// if input is password type, mask value for security concerns
+			if (e.srcElement.type === "password") {
+				returnObj.inputValue = "******";
 			}
 		}
 

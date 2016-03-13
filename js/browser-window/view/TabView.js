@@ -294,7 +294,10 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 				// record click event
 				else if (msgObject.eventType === "click") {
 					if (hackBrowserWindow.getIsTrackingOn() === true) {
-						hackBrowserWindow.getIPCHandler().sendMouseEventData(tabViewId, webViewURL);
+						if (hackBrowserWindow.getActiveTabView() === _this) {
+							hackBrowserWindow.getIPCHandler().sendMouseEventData(tabViewId, webViewURL);
+							// _this.takeScreenshotAndRequestUpload();
+						}
 					}
 				}
 
@@ -309,7 +312,10 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 					// hackBrowserWindow.setIsTrackingOn(false);
 				}
 
-				else if ((msgObject.eventType === "blur") && (msgObject.type === "input/password")) {
+				else if (msgObject.eventType === "blur") {
+					if ((msgObject.type === "input/password") || (msgObject.type === "input/search") || (msgObject.type === "input/email") || (msgObject.type === "input/text") || (msgObject.type === "textarea")) {
+						console.log(msgObject);
+					}
 					// hackBrowserWindow.setIsTrackingOn(true);
 				}
 			} catch(err) {

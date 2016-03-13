@@ -18,6 +18,7 @@ function SearchBox(tabView) {
 	var nextBtnEl;
 	var closeBtnEl;
 	var searchVal;
+	var isInputFocusEvent;
 
 	/* ====================================
 	 private methods
@@ -33,6 +34,8 @@ function SearchBox(tabView) {
 		nextBtnEl = searchWrapperEl.querySelector(".next");
 		closeBtnEl = searchWrapperEl.querySelector(".close");
 
+		isInputFocusEvent = false;
+
 		attachEventHandlers();
 	};
 
@@ -40,25 +43,34 @@ function SearchBox(tabView) {
 	 * attach event handlers for menu bar buttons
 	 */
 	var attachEventHandlers = function() {
-		searchInputEl.addEventListener("keyup", function(e) {
-			searchVal = searchInputEl.value;
-
-			// Enter key
-			if (e.charCode === 13) {
-				e.preventDefault();
-			}
-
-			if (searchVal) {
-				tabView.getWebViewEl().findInPage(searchVal, {
-
-				});
-			}
-		});
-
+		searchInputEl.addEventListener("keyup", onSearchInputKeyUp);
 		prevBtnEl.addEventListener("click", onPrevBtnClick);
 		nextBtnEl.addEventListener("click", onNextBtnClick);
 		closeBtnEl.addEventListener("click", onCloseBtnClick);
 		tabView.getWebViewEl().addEventListener("found-in-page", onFoundInPage);
+	};
+
+	var onSearchInputKeyUp = function(e) {
+		searchVal = searchInputEl.value;
+
+		console.log(e);
+
+		if (e.keyCode === 27) {				// esc key
+			_this.close();
+		} else if (e.keyCode === 13) {		// enter key
+			e.preventDefault();
+		} else {
+			// if the keyup event is not fired from input focus event
+			// and searchVal is not blank, find in page
+			if (!isInputFocusEvent) {
+				if (searchVal) {
+					tabView.getWebViewEl().findInPage(searchVal, {});
+				}
+			} else {
+				isInputFocusEvent = false;
+			}
+
+		}
 	};
 
 	var onPrevBtnClick = function(e) {
@@ -85,7 +97,7 @@ function SearchBox(tabView) {
 	};
 
 	var onFoundInPage = function(e) {
-		console.log(e);
+		console.log(e.result);
 	};
 
 	var updateFindResult = function(index, totalCount) {
@@ -101,6 +113,11 @@ function SearchBox(tabView) {
 	};
 
 	_this.open = function() {
+		// temporarily set flag to prevent find-in-page running
+		// when opening up the search box
+		// focusing on input elements will fire keyup event
+		isInputFocusEvent = true;
+
 		searchWrapperEl.style.display = "block";
 		searchInputEl.focus();
 	};
