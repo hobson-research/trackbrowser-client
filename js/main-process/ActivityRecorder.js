@@ -109,7 +109,9 @@ function ActivityRecorder(mainProcessController) {
 	};
 
 	_this.recordInputEvent = function(inputData) {
-		inputData['type'] = input;
+		inputData = addCommonInfoToPostObj(inputData);
+		inputData['inputType'] = inputData.type;
+		inputData['type'] = "input";
 
 		request.post({
 			url: tbServerHost + ":" + tbServerPort + "/api/v1/input",

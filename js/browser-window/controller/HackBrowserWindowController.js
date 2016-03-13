@@ -34,6 +34,8 @@ function HackBrowserWindowController() {
 	var dataPath;
 
 	var fibonacciScreenshotTimer;
+	var isScreenshotDelayClear;
+	var screenshotDelayTimer;
 
 
 	/* ====================================
@@ -55,6 +57,7 @@ function HackBrowserWindowController() {
 		tabList = {};
 
 		isTrackingOn = true;
+		isScreenshotDelayClear = true;
 
 		ipcHandler.requestUserInfo(function(userInfoObj) {
 			userInfoObj = JSON.parse(userInfoObj);
@@ -368,6 +371,17 @@ function HackBrowserWindowController() {
 	_this.captureActiveWebView = function(callback) {
 		console.log("captureActiveWebView()");
 
+		// limit the number of screenshots being taken with timed intervals
+		if (isScreenshotDelayClear === false) {
+			console.log("screenshot delay hasn't been cleared yet");
+
+			return;
+		}
+
+		// take screenshot since delay has been cleared
+		// reset screenshot delay timer
+		_this.resetScreenshotDelayTimer();
+
 		var captureDate = new Date();
 
 		var fileName = "capture_" + userName + "_" + captureDate.getFullYear() + Utility.pad((captureDate.getMonth() + 1), 2) + Utility.pad(captureDate.getDate(), 2) + "_" + Utility.pad(captureDate.getHours(), 2) + Utility.pad(captureDate.getMinutes(), 2) + Utility.pad(captureDate.getSeconds(), 2) + ".png";
@@ -393,8 +407,6 @@ function HackBrowserWindowController() {
 	};
 
 	_this.setIsTrackingOn = function(isOn) {
-		console.log("HackBrowserWindowController.setIsTrackingOn: " + isOn);
-
 		isTrackingOn = isOn;
 		userInfoBar.setTrackingMode(isOn);
 
@@ -406,6 +418,28 @@ function HackBrowserWindowController() {
 	// reset counter for Fibonacci screenshot
 	_this.resetFibonacciScreenshotTimer = function() {
 		scheduleFibonacciScreenshot();
+	};
+
+	// reset screenshot-limit-timer
+	_this.resetScreenshotDelayTimer = function() {
+		if (screenshotDelayTimer) {
+			clearTimeout(screenshotDelayTimer);
+		}
+
+		isScreenshotDelayClear = false;
+
+		screenshotDelayTimer = setTimeout(function() {
+			isScreenshotDelayClear = true;
+		}, 2000);
+	};
+
+	// enable screenshot
+	_this.clearScreenshotDelay = function() {
+		if (screenshotDelayTimer) {
+			clearTimeout(screenshotDelayTimer);
+		}
+
+		isScreenshotDelayClear = true;
 	};
 
 	init();

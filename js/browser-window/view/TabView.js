@@ -137,6 +137,9 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 		// take screenshot and notify main process via ipc
 		if ((hackBrowserWindow.getIsTrackingOn() === true) && (isDidNavigateHandled === false)) {
 			if (hackBrowserWindow.getActiveTabView() === _this) {
+				// manually clear screenshot delay
+				hackBrowserWindow.clearScreenshotDelay();
+
 				_this.takeScreenshotAndRequestUpload();
 			}
 
@@ -293,15 +296,21 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 
 				// record click event
 				else if (msgObject.eventType === "click") {
+					// reset fibonacci timer
+					hackBrowserWindow.resetFibonacciScreenshotTimer();
+
 					if (hackBrowserWindow.getIsTrackingOn() === true) {
 						if (hackBrowserWindow.getActiveTabView() === _this) {
 							hackBrowserWindow.getIPCHandler().sendMouseEventData(tabViewId, webViewURL);
-							// _this.takeScreenshotAndRequestUpload();
+							_this.takeScreenshotAndRequestUpload();
 						}
 					}
 				}
 
 				else if (msgObject.eventType === "scroll") {
+					// reset fibonacci timer
+					hackBrowserWindow.resetFibonacciScreenshotTimer();
+
 					if (hackBrowserWindow.getIsTrackingOn() === true) {
 						hackBrowserWindow.getIPCHandler().sendScrollEventData(tabViewId, webViewURL);
 						_this.takeScreenshotAndRequestUpload();
@@ -314,7 +323,11 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 
 				else if (msgObject.eventType === "blur") {
 					if ((msgObject.type === "input/password") || (msgObject.type === "input/search") || (msgObject.type === "input/email") || (msgObject.type === "input/text") || (msgObject.type === "textarea")) {
-						console.log(msgObject);
+						if (hackBrowserWindow.getActiveTabView() === _this) {
+							console.log(msgObject);
+							hackBrowserWindow.getIPCHandler().sendInputEventData(tabViewId, webViewURL, msgObject);
+							_this.takeScreenshotAndRequestUpload();
+						}
 					}
 					// hackBrowserWindow.setIsTrackingOn(true);
 				}
