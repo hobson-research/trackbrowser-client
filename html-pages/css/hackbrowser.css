@@ -242,39 +242,24 @@ input#address-bar {
 	background: #fff;
 }
 
-.button-group {
-	position: absolute;
-	top: 2px;
-	right: 0;
-}
-
-	.button-group a.button {
-		border: 1px solid #f5f5f5;
-		padding: 3px 8px;
-		background: #f5f5f5;
-	}
-
-		a.button.prev {
-			border-left-color: #ddd;
-		}
-
-		a.button.next {
-			border-left-color: #ddd;
-			border-top-right-radius: 3px;
-			border-bottom-right-radius: 3px;
-		}
-
-		.button-group a.button:hover {
-			background: #f9f9f9;
-		}
-
 .search-wrapper input.search {
 	border: none;
 	background: none;
-	width: 200px;
+	width: 220px;
 	font-size: 14px;
 	line-height: 14px;
 	outline: none;
+}
+
+.search-wrapper .match-display {
+	display: none;
+	font-size: 12px;
+	line-height: 12px;
+	position: absolute;
+	top: 1px;
+	right: 54px;
+	background: #ff6666;
+	padding: 6px 4px 5px 6px;
 }
 
 .search-wrapper a.button {
@@ -283,6 +268,32 @@ input#address-bar {
 	text-align: center;
 	cursor: pointer;
 }
+
+.search-input-wrapper .button-group {
+	position: absolute;
+	top: 2px;
+	right: 0;
+}
+
+	.search-input-wrapper .button-group a.button {
+		border: 1px solid #f5f5f5;
+		padding: 3px 8px;
+		background: #f5f5f5;
+	}
+
+		.search-input-wrapper a.button.prev {
+			border-left-color: #ddd;
+		}
+
+		.search-input-wrapper a.button.next {
+			border-left-color: #ddd;
+			border-top-right-radius: 3px;
+			border-bottom-right-radius: 3px;
+		}
+
+		.search-input-wrapper .button-group a.button:hover {
+			background: #f9f9f9;
+		}
 
 	.search-wrapper a.button.close {
 		position: absolute;
