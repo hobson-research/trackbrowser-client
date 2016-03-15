@@ -82,7 +82,7 @@ function HackBrowserWindowController() {
 
 	var attachEventHandlers = function() {
 		// shortcuts
-		key('ctrl+f', function() {
+		key('⌘+f, ctrl+f', function() {
 			activeTabView.getSearchBox().open();
 		});
 
