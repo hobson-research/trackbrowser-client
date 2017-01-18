@@ -318,18 +318,19 @@ function TabView(hackBrowserWindow, browserTabBar, url) {
 				}
 
 				else if ((msgObject.eventType === "focus") && (msgObject.type === "input/password")) {
-					// hackBrowserWindow.setIsTrackingOn(false);
+					
 				}
 
 				else if (msgObject.eventType === "blur") {
 					if ((msgObject.type === "input/password") || (msgObject.type === "input/search") || (msgObject.type === "input/email") || (msgObject.type === "input/text") || (msgObject.type === "textarea")) {
-						if (hackBrowserWindow.getActiveTabView() === _this) {
-							console.log(msgObject);
-							hackBrowserWindow.getIPCHandler().sendInputEventData(tabViewId, webViewURL, msgObject);
-							_this.takeScreenshotAndRequestUpload();
+						if (hackBrowserWindow.getIsTrackingOn() === true) {
+							if (hackBrowserWindow.getActiveTabView() === _this) {
+								console.log(msgObject);
+								hackBrowserWindow.getIPCHandler().sendInputEventData(tabViewId, webViewURL, msgObject);
+								_this.takeScreenshotAndRequestUpload();
+							}
 						}
 					}
-					// hackBrowserWindow.setIsTrackingOn(true);
 				}
 			} catch(err) {
 				// console.error(err);
