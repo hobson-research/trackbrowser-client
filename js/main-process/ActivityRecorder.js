@@ -5,7 +5,6 @@ const fs = require("fs");
 const path = require("path");
 
 function ActivityRecorder(mainProcessController) {
-	// const tbServerHost = "http://10.88.187.97";
 	const tbServerHost = "http://52.32.246.19";
 	const tbServerPort = "8082";
 

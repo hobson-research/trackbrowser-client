@@ -1,13 +1,12 @@
 'use strict';
 
 // import {IPCMainProcessHandler} from "./js/main-process/IPCMainProcessHandler";
-const electron = require("electron");
+const electron = require('electron');
 const app = electron.app;
-const fs = require("fs");
-const path = require("path");
-const dialog = require("dialog");
-const EventEmitter = require("events").EventEmitter;
-const session = require("electron").session;
+const fs = require('fs');
+const path = require('path');
+const EventEmitter = require('events').EventEmitter;
+const session = require('electron').session;
 const HackBrowserWindowManager = require(GLOBAL.__app.basePath + "/js/main-process/HackBrowserWindowManager");
 const IPCMainProcessHandler = require(GLOBAL.__app.basePath + "/js/main-process/IPCMainProcessHandler");
 const ActivityRecorder = require(GLOBAL.__app.basePath + "/js/main-process/ActivityRecorder.js");
@@ -66,7 +65,7 @@ function MainProcessController() {
 					fs.mkdir(GLOBAL.__app.dataPath, function(err) {
 						if (err) {
 							// TODO: show error messagebox and quit app
-							dialog.showMessageBox({
+							electron.showMessageBox({
 								type: "info",
 								buttons: ["ok"],
 								title: GLOBAL.__app.dataPath,
@@ -124,7 +123,7 @@ function MainProcessController() {
 
 		activityRecorder.checkServerAlive(
 			function(err) {
-				dialog.showErrorBox('Server Not Responding', 'Server is not responding. ');
+				electron.showErrorBox('Server Not Responding', 'Server is not responding. ');
 
 				app.quit();
 			},

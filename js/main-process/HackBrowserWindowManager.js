@@ -1,6 +1,6 @@
 'use strict';
 
-const electron = require("electron");
+const electron = require('electron');
 const BrowserWindow = electron.BrowserWindow;
 const PersistentStorage = require(__app.basePath + "/js/common/PersistentStorage");
 
@@ -86,7 +86,7 @@ function HackBrowserWindowManager(mainProcessController) {
 		// get picture URL
 		mainProcessController.getActivityRecorder().getUserPictureInfoFromServer(
 			function(err) {
-				dialog.showErrorBox('Error retrieving picture URL', 'Server is not responding. ');
+				electron.showErrorBox('Error retrieving picture URL', 'Server is not responding. ');
 			},
 			function(imageInfoObj) {
 				console.log("HackBrowserWindowManager.handleUserNameCheckPass()");
@@ -324,7 +324,7 @@ function HackBrowserWindowManager(mainProcessController) {
 			browserWindow.loadURL("file://" + __app.basePath + "/html-pages/browser-window.html");
 
 			// Open the DevTools (debugging)
-			browserWindow.openDevTools();
+			// browserWindow.openDevTools();
 
 			browserWindowList[browserWindow.id] = browserWindow;
 			attachEventHandlersToBrowserWindow(browserWindow);
