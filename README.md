@@ -1,4 +1,7 @@
 # TrackBrowser
+
+![tb_03_browser_screen](https://user-images.githubusercontent.com/1064036/39585329-61c2302e-4ea9-11e8-876a-b89872f0826b.png)
+
 Trackbrowser client application for Dr.Hobson and Dr.Mayew
 
 ## About
@@ -14,9 +17,6 @@ The application is written in Node.js based on Electron.js (a framework for buil
 
 ![tb_02_researchinfo_border](https://user-images.githubusercontent.com/1064036/39585325-600dbd5c-4ea9-11e8-81ba-e0d8901aa547.png)
 <br>Research Information Input Window<br><br><br>
-
-![tb_03_browser_screen](https://user-images.githubusercontent.com/1064036/39585329-61c2302e-4ea9-11e8-876a-b89872f0826b.png)
-<br>Browser Screen<br><br><br>
 
 ## Relevant Projects
 - [https://github.com/hobson-research/trackbrowser-server](https://github.com/hobson-research/trackbrowser-server): The web activities collected through this browser are sent to a server running on an Amazon EC2 instance. 
