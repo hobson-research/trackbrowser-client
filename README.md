@@ -1,12 +1,7 @@
-# TrackBrowser
-
 ![tb_03_browser_screen](https://user-images.githubusercontent.com/1064036/39585329-61c2302e-4ea9-11e8-876a-b89872f0826b.png)
 
-Trackbrowser client application for Dr.Hobson and Dr.Mayew
-
-## About
-
-This browser is used in research for better understanding how investment research affects research decisions. Web activities are tracked by default, and can be turned off at any time. <br><br>
+## Trackbrowser
+This browser is used in research by Dr.Hobson and Dr.Mayew for better understanding how investment research affects research decisions. Web activities are tracked by default, and can be turned off at any time. <br><br>
 
 The application is written in Node.js based on Electron.js (a framework for building desktop applications). Please see "Relevant Projects" below for the server-side code. 
 
