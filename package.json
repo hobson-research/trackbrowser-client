@@ -3,6 +3,6 @@
   "version": "0.10.0",
   "main": "main.js",
   "dependencies": {
-    "request": "2.67.0"
+    "request": "2.88.0"
   }
 }
